@@ -1,0 +1,13 @@
+{
+  "name": "rocksoft",
+  "owner": {
+    "name": "Rocksoft"
+  },
+  "plugins": [
+    {
+      "name": "rocksoft-shape",
+      "source": "./",
+      "description": "Rocksoft discovery toolkit — rs-shape skill + Rocksoft Flow MCP server."
+    }
+  ]
+}

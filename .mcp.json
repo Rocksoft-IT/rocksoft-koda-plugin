@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "rocksoft-mcp": {
+      "type": "http",
+      "url": "https://flow.rocksoft.co/mcp/0b5ef84b-ec12-4d2b-a066-f10ebc2c0643"
+    }
+  }
+}
