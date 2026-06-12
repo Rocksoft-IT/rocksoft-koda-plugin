@@ -2,7 +2,7 @@
   "mcpServers": {
     "rocksoft-mcp": {
       "type": "http",
-      "url": "https://flow.rocksoft.co/mcp/0b5ef84b-ec12-4d2b-a066-f10ebc2c0643",
+      "url": "https://n8n-production-c6bd.up.railway.app/mcp/0b5ef84b-ec12-4d2b-a066-f10ebc2c0643",
       "headers": {
         "Authorization": "Bearer ycZSxdmi5bE7AZs44sLxtpf5qjYAwlMtyFZJPDqk3TmM89XtqFDii7EIxr4WsDd3"
       }

@@ -175,4 +175,4 @@ Plik jest checkpointowany po każdej fazie, więc sesję można przerwać w dowo
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.1.4`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.1.5`.

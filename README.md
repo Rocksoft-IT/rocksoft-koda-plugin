@@ -47,4 +47,4 @@ Claude wywoła `rs-shape` i poprowadzi przez fazy discovery, korzystając z narz
 
 ## Wersja
 
-`0.1.4`
+`0.1.5`
