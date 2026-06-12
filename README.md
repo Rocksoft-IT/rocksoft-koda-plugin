@@ -1,26 +1,19 @@
-# rocksoft-shape
+# Rocksoft Koda
 
-Claude Code plugin łączący Rocksoftowy skill discovery (`rs-shape`) z serwerem MCP `Rocksoft Flow`.
+Claude Code plugin łączący Rocksoftowy skill discovery (`rs-shape`) z serwerem MCP `Rocksoft Flow` flow.rocksoft.co.
 
 ## Co zawiera
 
 - **Skill `rs-shape`** — ustrukturyzowana rozmowa discovery, która zamienia surowy pomysł (greenfield lub brownfield) w zestaw artefaktów w `context/discovery/`. Wykrywa typ projektu po markerach w katalogu roboczym i dopasowuje fazy.
-- **MCP `rocksoft-flow`** — połączenie HTTP do `https://flow.rocksoft.co/mcp/...` udostępniające narzędzia Rocksoft Flow w sesji Claude.
+- **MCP `rocksoft-flow`** — połączenie HTTPS do `https://flow.rocksoft.co/mcp/...` udostępniające narzędzia Rocksoft Flow w sesji Claude.
 
 ## Instalacja
-
-### Z lokalnej ścieżki
-
-```bash
-claude plugin marketplace add /Users/jaroslawkrakowka/Desktop/Rocksoft/rocksoft-plugin-claude
-claude plugin install rocksoft-shape@rocksoft
-```
 
 ### Z repozytorium git
 
 ```bash
-claude plugin marketplace add <git-url>
-claude plugin install rocksoft-shape@rocksoft
+claude plugin marketplace add https://github.com/Rocksoft-IT/claude-plugin
+claude plugin install rocksoft-koda@rocksoft
 ```
 
 Po instalacji Claude Code automatycznie:
