@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "rocksoft-shape",
+      "name": "rocksoft-koda",
       "source": "./",
       "description": "Rocksoft discovery toolkit — rs-shape skill + Rocksoft Flow MCP server."
     }
