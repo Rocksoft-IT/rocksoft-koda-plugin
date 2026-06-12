@@ -1,6 +1,6 @@
-# rocksoft-shape — przewodnik użytkownika
+# rocksoft-koda — przewodnik użytkownika
 
-Plugin `rocksoft-shape` dodaje do Claude Code zestaw narzędzi discovery od Rocksoft. Po instalacji w sesji Claude Code dostępne są dwie rzeczy:
+Plugin `rocksoft-koda` dodaje do Claude Code zestaw narzędzi discovery od Rocksoft. Po instalacji w sesji Claude Code dostępne są dwie rzeczy:
 
 1. **Skill `rs-shape`** — ustrukturyzowana rozmowa discovery, która zamienia surowy pomysł w jeden plik specyfikacji (`context/discovery/discovery-notes.md`) i — opcjonalnie — otwiera z nim Pull Request w wybranym repozytorium.
 2. **Serwer MCP `rocksoft-mcp`** — połączenie HTTP z Rocksoft Flow (`https://flow.rocksoft.co/mcp/...`), z którego skill korzysta do listowania repozytoriów, pobierania kontekstu projektu i otwierania PR-ów.
@@ -12,11 +12,11 @@ Plugin `rocksoft-shape` dodaje do Claude Code zestaw narzędzi discovery od Rock
 ```bash
 # z lokalnej ścieżki
 claude plugin marketplace add /sciezka/do/rocksoft-plugin-claude
-claude plugin install rocksoft-shape@rocksoft
+claude plugin install rocksoft-koda@rocksoft
 
 # lub z repozytorium git
 claude plugin marketplace add <git-url>
-claude plugin install rocksoft-shape@rocksoft
+claude plugin install rocksoft-koda@rocksoft
 ```
 
 Po instalacji Claude Code automatycznie ładuje skill `rs-shape` i podłącza serwer MCP `rocksoft-flow`. Nie trzeba nic więcej konfigurować.
@@ -175,4 +175,4 @@ Plik jest checkpointowany po każdej fazie, więc sesję można przerwać w dowo
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-shape` w wersji `0.1.4`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.1.4`.
