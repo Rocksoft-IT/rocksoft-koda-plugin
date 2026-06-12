@@ -1,6 +1,6 @@
 {
   "name": "rocksoft-koda",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Rocksoft discovery toolkit for Claude Code — bundles the rs-shape discovery skill and the Rocksoft Flow MCP server for shaping greenfield and brownfield work into shared-context artifacts.",
   "author": {
     "name": "Rocksoft"
