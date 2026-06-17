@@ -11,7 +11,7 @@ Plugin `rocksoft-koda` dodaje do Claude Code zestaw narzędzi discovery od Rocks
 
 ```bash
 # z repozytorium git
-claude plugin marketplace add <git-url>
+claude plugin marketplace add https://github.com/Rocksoft-IT/rocksoft-koda-plugin
 claude plugin install rocksoft-koda@rocksoft
 ```
 
@@ -171,4 +171,4 @@ Plik jest checkpointowany po każdej fazie, więc sesję można przerwać w dowo
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.1.6`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.1.7`.
