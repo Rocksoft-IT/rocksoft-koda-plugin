@@ -13,6 +13,7 @@ allowed-tools:
   - Write
   - Bash
   - AskUserQuestion
+  - mcp__*
 ---
 
 # rs-change: Start a new change
@@ -40,7 +41,8 @@ references (with or without a leading @) are accepted; the last path segment is
 used as the change-id.
 
 The change-id must be kebab-case and unique across context/changes/ and
-context/archive/.
+context/archive/. I'll also ask for your email and target repository — they bind
+the change so it can be merged back via a server-side PR at the end.
 ```
 
 Then wait.
@@ -64,6 +66,55 @@ Split on the first whitespace:
 3. **Parent exists:** `context/changes/` must exist (run `rs-init` if not). Do NOT
    auto-create the parent.
 
+## Identity: client email & repository (REQUIRED)
+
+A change is merged at the end of its lifecycle by a **server-side PR** through
+the Rocksoft Flow MCP server (`rocksoft-mcp`) — the Claude runtime has no `git`
+and no credentials to the repo, so the merge cannot happen locally. The change
+must therefore be bound to a **client email** and a **target repository** up
+front, and both travel in `change.md` frontmatter so the closing step knows
+whom it's for and where to merge. Run this **one sub-step at a time** — never a
+wall of questions. There is **NO skip option**: without an email there is no way
+to list repositories, and without a repository there is nothing to merge into.
+
+This mirrors `rs-shape` Step 0.7a–c — keep the two entry skills consistent.
+
+### Client email (REQUIRED)
+
+Ask: "What's your email? I'll record it as the client / driver of this change,
+and use it to pull your repositories from Rocksoft Flow." If the harness
+provides a known user email, propose it as the recommended AskUserQuestion
+option (first, "(Recommended)") — never silently auto-fill, always confirm.
+
+Validate the shape (contains `@` and a dot in the domain part). Re-ask until
+valid — there is no skip. If the user explicitly refuses, STOP: "An email is
+required to look up your repositories in Rocksoft Flow. Re-run `rs-change` when
+you're ready to provide one."
+
+### Pick the repository (REQUIRED)
+
+With the email in hand, call the Rocksoft Flow MCP server to list repositories
+for that email. Look for a tool like `list_repositories` (read its schema before
+calling; pass the email exactly as the field name expects). Show the returned
+repos via AskUserQuestion — label `<repo-name>`, description `<git_url> —
+<description?>` — in the order the MCP returned them. There is **no "standalone"
+/ "none" option**.
+
+If the tool is unreachable, not exposed, or returns no repos, the change
+**cannot be bound** — print the problem in plain language and STOP, offering
+retry:
+
+- **Tool not exposed:** "Rocksoft Flow MCP is connected but `list_repositories`
+  isn't exposed — I can't bind this change. Ask the Rocksoft Flow admin to wire
+  it in n8n, then re-run `rs-change`."
+- **Connection / network error:** print the error verbatim, then "I couldn't
+  reach Rocksoft Flow to list your repositories. Want to retry?" (retry / abort).
+- **Empty list:** "Rocksoft Flow doesn't have any repositories for `<email>`
+  yet. Ask the Rocksoft admin to add one, then re-run `rs-change`." STOP.
+
+On selection, capture both `repository.name` and `repository.git_url` for the
+frontmatter — use the `git_url` **verbatim** as returned, never rewrite it.
+
 ## Creation
 
 1. `mkdir -p context/changes/<change-id>/`.
@@ -74,12 +125,18 @@ Split on the first whitespace:
    notes for this change: links, ad-hoc context, decisions that don't belong in
    research/frame/plan. -->`. Non-empty intent → paste the user's words verbatim
    as the Notes body (no hint comment).
-4. Write `context/changes/<change-id>/change.md` exactly:
+4. Write `context/changes/<change-id>/change.md` exactly (`client`,
+   `repository.name`, `repository.git_url` come from the Identity section — none
+   may be empty or `(none)`):
 
 ```markdown
 ---
 change_id: <change-id>
 title: <title>
+client: <client-email>
+repository:
+  name: <repo name>
+  git_url: <git url>
 status: new
 created: <YYYY-MM-DD>
 updated: <YYYY-MM-DD>
@@ -106,6 +163,7 @@ default to `rs-plan`. Copy the chosen command to the clipboard and print:
 
 ```
 ✓ Created context/changes/<change-id>/change.md (status: new)
+  bound to <repository.name> · driven by <client>
 
 Next step:
   → <NEXT_CMD>  (✓ copied to clipboard)
@@ -117,6 +175,9 @@ Other options:
 
 ## What this skill does NOT do
 
+- It does not open or merge the PR. It only **binds** the change to a client
+  email and repository (in `change.md` frontmatter); the server-side merge PR
+  via Rocksoft Flow MCP happens at the closing step of the change lifecycle.
 - It does not write `frame.md`, `research.md`, or `plan.md` — those come from
   their own skills.
 - It does not write any sidecar state file; `## Progress` in `plan.md` is the

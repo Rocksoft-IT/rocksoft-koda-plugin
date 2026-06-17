@@ -180,7 +180,7 @@ STOP:
 ```
 This looks like a small, localized change — shaping it through full discovery
 would be overkill. For a change this size, skip straight to:
-  • rs-new <change-id> → rs-plan <change-id>   — a tracked change with a quick plan
+  • rs-change <change-id> → rs-plan <change-id>   — a tracked change with a quick plan
   • a direct edit                              — for a truly trivial tweak (e.g. one color value)
 ```
 
@@ -566,12 +566,6 @@ the aim is an increment that ships end-to-end, whatever its size.
 ask for one `### Secondary` (a nice-to-have) and one or two `### Guardrails`
 (things that must not break — privacy, minimum performance, UX). For brownfield,
 guardrails must explicitly include the existing behavior that must be preserved.
-
-Finally, ask for a **rough time estimate** for this slice and record it as-is —
-"How long do you think this slice will take?" Write the user's answer verbatim to
-the `estimated_effort` frontmatter field (free text — e.g. "~2 weeks", "a few
-weekends", "unknown"). This is a plain record, not a gate: do not challenge it,
-push to cut scope because of it, or ask the user to commit to it.
 
 ### Step 5 — Phase 4: Functional requirements & grilling
 
