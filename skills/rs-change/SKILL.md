@@ -1,12 +1,12 @@
 ---
 name: rs-change
 description: >
-  Initialize a new change folder under context/changes/<change-id> with a
+  Initialize a new change folder under context/changes/[change-id] with a
   change.md identity file. A "change" is one unit of work end to end — research,
   framing, planning, implementation, and review all live in one folder keyed by
-  <change-id>. Use to start a new piece of work before planning. Trigger phrases:
-  "new change", "start a change", "open a change folder", "begin <change-id>".
-argument-hint: "<change-id-or-path> [freeform intent]"
+  the change-id. Use to start a new piece of work before planning. Trigger
+  phrases: "new change", "start a change", "open a change folder", "begin a change".
+argument-hint: "[change-id-or-path] [freeform intent]"
 allowed-tools:
   - Read
   - Glob
