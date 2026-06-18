@@ -77,7 +77,7 @@ whom it's for and where to merge. Run this **one sub-step at a time** — never 
 wall of questions. There is **NO skip option**: without an email there is no way
 to list repositories, and without a repository there is nothing to merge into.
 
-This mirrors `rs-shape` Step 0.7a–c — keep the two entry skills consistent.
+This mirrors `rs-discovery` Step 0.7a–c — keep the two entry skills consistent.
 
 ### Client email (REQUIRED)
 

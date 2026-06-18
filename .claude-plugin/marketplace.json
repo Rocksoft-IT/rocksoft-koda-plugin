@@ -7,7 +7,7 @@
     {
       "name": "rocksoft-koda",
       "source": "./",
-      "description": "Rocksoft discovery toolkit — rs-shape skill + Rocksoft Flow MCP server."
+      "description": "Rocksoft discovery toolkit — rs-discovery skill + Rocksoft Flow MCP server."
     }
   ]
 }

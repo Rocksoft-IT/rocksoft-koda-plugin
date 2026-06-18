@@ -1,7 +1,7 @@
 # discovery-notes.md template
 
 This is the single source of truth for the structure of
-`context/discovery/discovery-notes.md` — the **only** file `rs-shape` writes.
+`context/discovery/discovery-notes.md` — the **only** file `rs-discovery` writes.
 Glossary and ADRs live as sections inside this file, not as separate files.
 The skill re-checks against this template at every checkpoint. Greenfield and
 brownfield share the same section names; brownfield adds `## Current System`
@@ -22,7 +22,6 @@ updated: <YYYY-MM-DD>
 product_type: web-app | api | cli | mobile | desktop | library | data-pipeline | other
 target_scale:
   users: small | medium | large | enterprise
-estimated_effort: <free text — the user's own rough estimate, e.g. "~2 weeks", "a few weekends", "unknown">
 checkpoint:
   current_phase: <int>       # 1..6, then 7 (gate), 8 (handoff)
   phases_completed: [<int>, ...]
@@ -38,9 +37,8 @@ to a Rocksoft Flow repo whose `CLAUDE.md`, `context/foundation/tech-stack.md`,
 and `context/prd/prd.md` were fetched server-side via the
 `get_repository_context` MCP tool to seed project context; no local clone is
 ever performed. `product_type` and `target_scale` are the ONLY product-level
-commitments captured; `estimated_effort` is a plain record, not a commitment.
-No framework, database, language, or platform belongs here — those are
-downstream of discovery.
+commitments captured. No framework, database, language, or platform belongs
+here — those are downstream of discovery.
 
 ## Section order
 
@@ -153,6 +151,3 @@ These are parked separately so they never leak into the product shape:
 ## Forward: tech-stack      # volunteered stack opinions → feed into rs-init's tech-stack.md
 ## Forward: technical-roadmap  # volunteered implementation/test/CI thoughts
 ```
-
-The user's rough time estimate is recorded only in the `estimated_effort`
-frontmatter field — a plain record, never a gate or a commitment.

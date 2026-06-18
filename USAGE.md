@@ -2,7 +2,7 @@
 
 Plugin `rocksoft-koda` dodaje do Claude Code zestaw narzędzi discovery od Rocksoft. Po instalacji w sesji Claude Code dostępne są dwie rzeczy:
 
-1. **Skill `rs-shape`** — ustrukturyzowana rozmowa discovery, która zamienia surowy pomysł w jeden plik specyfikacji (`context/discovery/discovery-notes.md`) i — opcjonalnie — otwiera z nim Pull Request w wybranym repozytorium.
+1. **Skill `rs-discovery`** — ustrukturyzowana rozmowa discovery, która zamienia surowy pomysł w jeden plik specyfikacji (`context/discovery/discovery-notes.md`) i — opcjonalnie — otwiera z nim Pull Request w wybranym repozytorium.
 2. **Serwer MCP `rocksoft-mcp`** — połączenie HTTP z Rocksoft Flow (`https://flow.rocksoft.co/mcp/...`), z którego skill korzysta do listowania repozytoriów, pobierania kontekstu projektu i otwierania PR-ów.
 
 ---
@@ -15,13 +15,13 @@ claude plugin marketplace add https://github.com/Rocksoft-IT/rocksoft-koda-plugi
 claude plugin install rocksoft-koda@rocksoft
 ```
 
-Po instalacji Claude Code automatycznie ładuje skill `rs-shape` i podłącza serwer MCP `rocksoft-flow`. Nie trzeba nic więcej konfigurować.
+Po instalacji Claude Code automatycznie ładuje skill `rs-discovery` i podłącza serwer MCP `rocksoft-flow`. Nie trzeba nic więcej konfigurować.
 
 ---
 
-## Do czego służy `rs-shape`
+## Do czego służy `rs-discovery`
 
-`rs-shape` to **facylitator rozmowy discovery**, nie generator treści. Zadaje pytania — jedno na raz — i zapisuje wyłącznie to, co powiedział użytkownik. Efektem jest jeden, wspólny dla zespołu (ludzi i agentów) dokument kontekstowy, na którym można budować dalszą pracę.
+`rs-discovery` to **facylitator rozmowy discovery**, nie generator treści. Zadaje pytania — jedno na raz — i zapisuje wyłącznie to, co powiedział użytkownik. Efektem jest jeden, wspólny dla zespołu (ludzi i agentów) dokument kontekstowy, na którym można budować dalszą pracę.
 
 Obsługuje dwa tryby, wykrywane automatycznie:
 
@@ -56,19 +56,19 @@ Pomóż mi zaszejpować nowy moduł autoryzacji — discovery session.
 ```
 
 ```
-rs-shape aplikacja z przepisami, która podpowiada posiłki z tego, co masz w lodówce
+rs-discovery aplikacja z przepisami, która podpowiada posiłki z tego, co masz w lodówce
 ```
 
 ```
-rs-shape @notes/pomysl.md
+rs-discovery @notes/pomysl.md
 ```
 
 Trzy sposoby przekazania pomysłu:
 
 | Sposób | Przykład | Zachowanie |
 |---|---|---|
-| Pomysł inline | `rs-shape apka do przepisów...` | Pomysł zapisany dosłownie jako punkt wyjścia |
-| Plik z notatkami | `rs-shape @notes/idea.md` | Skill czyta plik w całości i traktuje go jako pomysł |
+| Pomysł inline | `rs-discovery apka do przepisów...` | Pomysł zapisany dosłownie jako punkt wyjścia |
+| Plik z notatkami | `rs-discovery @notes/idea.md` | Skill czyta plik w całości i traktuje go jako pomysł |
 | Bez argumentu | „discovery session" | Skill poprosi o opisanie pomysłu własnymi słowami |
 
 Rozmowa toczy się **w języku użytkownika** (np. po polsku), ale artefakty na dysku są **zawsze po angielsku** — żeby były przenośne między zespołami i narzędziami.
@@ -127,7 +127,7 @@ Finalny zapis `discovery-notes.md`, przegląd decyzji pod kątem ADR-ów i krót
 Na koniec skill **zawsze pyta** (nigdy nie robi tego automatycznie), czy otworzyć Pull Request ze specyfikacją w repozytorium wybranym w kroku 0.7:
 
 - **„Tak, otwórz PR"** — narzędzie MCP `create_spec_pr` tworzy serwer-side nową gałąź w repozytorium, dodaje do niej `discovery-notes.md` i otwiera PR do gałęzi domyślnej. Specyfikacja **nigdy nie trafia bezpośrednio na main** — zawsze przechodzi przez review. Po sukcesie dostajesz numer PR, nazwę gałęzi i link.
-- **„Jeszcze nie — zostaw lokalnie"** — plik zostaje w `context/discovery/discovery-notes.md`; PR można otworzyć później, ponownie uruchamiając `rs-shape`.
+- **„Jeszcze nie — zostaw lokalnie"** — plik zostaje w `context/discovery/discovery-notes.md`; PR można otworzyć później, ponownie uruchamiając `rs-discovery`.
 
 ---
 
@@ -171,4 +171,4 @@ Plik jest checkpointowany po każdej fazie, więc sesję można przerwać w dowo
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.1.8`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.1.9`.

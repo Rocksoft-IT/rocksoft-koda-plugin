@@ -1,5 +1,5 @@
 ---
-name: rs-shape
+name: rs-discovery
 description: >
   Run a structured discovery conversation that turns a raw idea — greenfield or
   brownfield — into a small set of shared-context artifacts under
@@ -29,7 +29,7 @@ allowed-tools:
   - mcp__*
 ---
 
-# rs-shape: Discovery conversation for greenfield and brownfield
+# rs-discovery: Discovery conversation for greenfield and brownfield
 
 This skill turns "I have an idea" (greenfield) or "I want to change this system"
 (brownfield) into a small, durable set of context artifacts a team — human or
@@ -137,12 +137,12 @@ instead of asking a wall of questions.
 
 When this skill is invoked:
 
-1. **If a freeform idea is given as an argument** (e.g. `rs-shape a recipe app
+1. **If a freeform idea is given as an argument** (e.g. `rs-discovery a recipe app
    that suggests meals from what's in your fridge`), record it verbatim as the
    **initial idea**. Do not paraphrase. Go to Step 0. Project name and client
    email are still asked in Step 0.7 — the inline idea does not skip identity
    capture.
-2. **If a file path is given** (e.g. `rs-shape @notes/idea.md`), read it in full
+2. **If a file path is given** (e.g. `rs-discovery @notes/idea.md`), read it in full
    and use its contents as the initial idea. Go to Step 0. Project name and
    client email are still asked in Step 0.7.
 3. **If nothing is given**, respond:
@@ -156,8 +156,8 @@ Please share:
 1. The initial idea — what do you want to build or change, in your own words?
 2. (Optional) Any rough notes, sketches, or links I should read first.
 
-Tip: pass the idea inline — `rs-shape a recipe app that uses what's in your
-fridge` — or for brownfield — `rs-shape add a recommendation engine to my
+Tip: pass the idea inline — `rs-discovery a recipe app that uses what's in your
+fridge` — or for brownfield — `rs-discovery add a recommendation engine to my
 recipe app`.
 ```
 
@@ -167,7 +167,7 @@ Then wait.
 
 ### Step 0: Scope triage — run this FIRST, before anything else
 
-Judge the size of the request before touching discovery. rs-shape is for shaping
+Judge the size of the request before touching discovery. rs-discovery is for shaping
 a new project or a *meaningful* change (a new module, a significant feature, an
 architectural change). It is the wrong tool for a small, localized tweak, and its
 six phases would only generate noise.
@@ -247,7 +247,7 @@ Validate the email shape with a minimal check (contains `@` and a dot in the
 domain part). If invalid or empty, re-ask — there is no skip option. Keep
 re-asking until you get a syntactically valid email. If the user explicitly
 refuses to provide one, STOP the session with a clear message: "An email is
-required to look up your repositories in Rocksoft Flow. Restart `rs-shape`
+required to look up your repositories in Rocksoft Flow. Restart `rs-discovery`
 when you're ready to provide one."
 
 #### Step 0.7b — Fetch the user's repositories from Rocksoft Flow MCP (REQUIRED)
@@ -264,13 +264,13 @@ problem in plain language and STOP, offering exactly one action: retry.
 
 - **Tool not exposed:** "Rocksoft Flow MCP is connected but the
   `list_repositories` tool isn't exposed. I can't proceed without it — ask
-  the Rocksoft Flow admin to wire it in n8n, then re-run `rs-shape`."
+  the Rocksoft Flow admin to wire it in n8n, then re-run `rs-discovery`."
 - **Connection / network error:** print the error verbatim, then "I couldn't
   reach Rocksoft Flow to list your repositories. We can't continue without
   this. Want to retry?" (offer: retry / abort).
 - **Empty list:** "Rocksoft Flow doesn't have any repositories for `<email>`
   yet. Ask the Rocksoft admin to add at least one repository for this email,
-  then re-run `rs-shape`." STOP.
+  then re-run `rs-discovery`." STOP.
 
 If repos are returned, expect each entry to carry at minimum a display name
 and a git URL (e.g. `name`, `git_url`). Other fields (description, default
@@ -286,7 +286,7 @@ must pick one of their repositories to proceed.
   MCP returned (`<git_url>` — `<description?>`).
 
 If the user explicitly refuses to pick any, STOP with: "A repository selection
-is required to continue. Re-run `rs-shape` once you're ready to pick one of
+is required to continue. Re-run `rs-discovery` once you're ready to pick one of
 your Rocksoft repositories."
 
 On a repo selection, capture both `repository.name` and `repository.git_url`
@@ -740,7 +740,7 @@ options:
                  Nothing is committed to the default branch directly."
   - label: "Not yet — keep it local"
     description: "Leave the file in context/discovery/discovery-notes.md.
-                 You can re-run rs-shape later to open the PR."
+                 You can re-run rs-discovery later to open the PR."
 multiSelect: false
 ```
 
