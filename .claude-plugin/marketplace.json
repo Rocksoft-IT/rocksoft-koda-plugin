@@ -7,7 +7,7 @@
     {
       "name": "rocksoft-koda",
       "source": "./",
-      "description": "Rocksoft discovery toolkit — rs-discovery skill + Rocksoft Flow MCP server."
+      "description": "Rocksoft Koda — rs-feature skill + Rocksoft Flow MCP server. Turns feature requests into ready-to-build issues."
     }
   ]
 }

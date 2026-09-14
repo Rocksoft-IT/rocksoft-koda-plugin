@@ -1,9 +1,9 @@
 {
   "name": "rocksoft-koda",
-  "version": "0.1.9",
-  "description": "Rocksoft discovery toolkit for Claude Code — bundles the rs-discovery discovery skill and the Rocksoft Flow MCP server for shaping greenfield and brownfield work into shared-context artifacts.",
+  "version": "0.2.0",
+  "description": "Rocksoft Koda for Claude — the rs-feature skill turns a client's feature or change request into a ready-to-build GitHub issue in their repository, through the Rocksoft Flow MCP server.",
   "author": {
     "name": "Rocksoft"
   },
-  "keywords": ["rocksoft", "discovery", "shaping", "rs-discovery", "mcp"]
+  "keywords": ["rocksoft", "rs-feature", "feature-request", "discovery", "mcp"]
 }

@@ -1,174 +1,133 @@
 # rocksoft-koda — przewodnik użytkownika
 
-Plugin `rocksoft-koda` dodaje do Claude Code zestaw narzędzi discovery od Rocksoft. Po instalacji w sesji Claude Code dostępne są dwie rzeczy:
+Plugin `rocksoft-koda` pozwala zgłosić Rocksoftowi nową funkcjonalność lub zmianę bezpośrednio z rozmowy z Claude. Efektem jest kompletne issue w Twoim repozytorium, od którego zespół Rocksoft (i jego automatyka) zaczyna pracę.
 
-1. **Skill `rs-discovery`** — ustrukturyzowana rozmowa discovery, która zamienia surowy pomysł w jeden plik specyfikacji (`context/discovery/discovery-notes.md`) i — opcjonalnie — otwiera z nim Pull Request w wybranym repozytorium.
-2. **Serwer MCP `rocksoft-mcp`** — połączenie HTTP z Rocksoft Flow (`https://flow.rocksoft.co/mcp/...`), z którego skill korzysta do listowania repozytoriów, pobierania kontekstu projektu i otwierania PR-ów.
+Po instalacji w Claude dostępne są dwie rzeczy:
+
+1. **Skill `rs-feature`** — prowadzi rozmowę i tworzy issue.
+2. **Konnektor `rocksoft-mcp`** — połączenie z Rocksoft Flow (`flow.rocksoft.co`), które listuje Twoje repozytoria, czyta kontekst projektu i zakłada issue.
 
 ---
 
-## Instalacja
+## Instalacja i pierwsze uruchomienie
+
+Plugin instaluje się **bezpośrednio z repozytorium GitHub** `Rocksoft-IT/rocksoft-koda-plugin`, które jest jego marketplace'em. Nie ma żadnej paczki zip do pobrania; aktualizacje również przychodzą z repozytorium.
+
+### Claude Desktop lub claude.ai
+
+1. Otwórz Ustawienia → Plugins → Browse plugins.
+2. Dodaj marketplace z GitHuba: `Rocksoft-IT/rocksoft-koda-plugin`.
+3. Zainstaluj i włącz plugin `rocksoft-koda`, a przy konnektorze Rocksoft Flow kliknij **Connect**.
+
+Na planach Team i Enterprise plugin i konnektor dodaje administrator Twojej organizacji. Poproś go o instalację, jeśli nie widzisz pluginu na liście.
+
+### Claude Code
 
 ```bash
-# z repozytorium git
 claude plugin marketplace add https://github.com/Rocksoft-IT/rocksoft-koda-plugin
 claude plugin install rocksoft-koda@rocksoft
 ```
 
-Po instalacji Claude Code automatycznie ładuje skill `rs-discovery` i podłącza serwer MCP `rocksoft-flow`. Nie trzeba nic więcej konfigurować.
+---
+
+## Jak zgłosić funkcjonalność
+
+Napisz w czacie, czego potrzebujesz, własnymi słowami. Skill aktywuje się na zwykłe prośby, np.:
+
+```text
+Chcę, żeby klienci mogli pobierać faktury jako PDF z panelu.
+```
+
+```text
+Potrzebujemy powiadomień SMS o zmianie statusu zamówienia.
+```
+
+```text
+Popraw komunikat błędu przy nieudanym logowaniu — jest niezrozumiały.
+```
+
+Możesz też wywołać skill wprost: `/rs-feature` i opisać pomysł.
+
+Rozmowa toczy się **w Twoim języku**. Issue powstaje **po angielsku**, żeby zespół i narzędzia Rocksoft mogły na nim polegać.
 
 ---
 
-## Do czego służy `rs-discovery`
+## Przebieg rozmowy
 
-`rs-discovery` to **facylitator rozmowy discovery**, nie generator treści. Zadaje pytania — jedno na raz — i zapisuje wyłącznie to, co powiedział użytkownik. Efektem jest jeden, wspólny dla zespołu (ludzi i agentów) dokument kontekstowy, na którym można budować dalszą pracę.
+### 1. Kto zgłasza
 
-Obsługuje dwa tryby, wykrywane automatycznie:
+Skill prosi o Twój e-mail (albo proponuje ten, który już zna) i potwierdza go. E-mail jest kluczem do listy repozytoriów, do których masz dostęp w Rocksoft Flow.
 
-- **Greenfield** — nowy projekt od zera. Wykrywany, gdy katalog roboczy nie ma markerów istniejącego projektu (historii gita, lockfile'ów itp.).
-- **Brownfield** — istotna zmiana w istniejącym systemie (nowy moduł, duża funkcja, zmiana architektoniczna). Wykrywany po markerach projektu; w tym trybie skill **najpierw czyta kod**, a dopiero potem pyta — nie każe użytkownikowi recytować faktów, które są w repozytorium.
+### 2. Które repozytorium
 
-### Kiedy używać
+Skill pobiera Twoje repozytoria. Jeśli jest jedno, potwierdza je jednym zdaniem. Jeśli kilka, pokazuje listę do wyboru. Bez repozytorium nie da się iść dalej.
 
-- Start nowego projektu lub aplikacji od zera.
-- Nowy moduł, znacząca funkcja albo zmiana architektoniczna w istniejącym systemie.
-- Chcesz „przemaglować" pomysł, zanim zaczniesz budować (stress-test planu).
-- Wznowienie niedokończonej sesji discovery (skill sam wykrywa istniejący `discovery-notes.md` i proponuje kontynuację).
+### 3. Kontekst projektu
 
-### Kiedy NIE używać
+Skill czyta pliki kontekstowe repozytorium po stronie Rocksoft Flow (jeśli istnieją) i streszcza w kilku zdaniach, jak rozumie projekt. Popraw go, jeśli coś się nie zgadza. Od tego momentu nie musisz opisywać rzeczy, które są w repozytorium.
 
-Do małych, lokalnych zmian: pojedynczy bugfix, szybki refactor, zmiana kolorów/odstępów/tekstów, poprawka jednego komponentu. Skill sam to rozpozna na etapie triage i odmówi pełnego discovery, wskazując lżejszą ścieżkę.
+### 4. Dobór głębokości rozmowy
 
----
+Skill ocenia wielkość prośby i mówi wprost, który tor wybrał. Możesz go zmienić.
 
-## Jak uruchomić
-
-W dowolnej sesji Claude Code wystarczy opisać, co chcesz zrobić — skill aktywuje się na frazy typu:
-
-- „nowy projekt", „od zera", „greenfield"
-- „shape an idea", „discovery session", „grill me on this"
-- „dodaj funkcję do mojej aplikacji", „brownfield", „istniejący projekt"
-
-Przykłady:
-
-```
-Pomóż mi zaszejpować nowy moduł autoryzacji — discovery session.
-```
-
-```
-rs-discovery aplikacja z przepisami, która podpowiada posiłki z tego, co masz w lodówce
-```
-
-```
-rs-discovery @notes/pomysl.md
-```
-
-Trzy sposoby przekazania pomysłu:
-
-| Sposób | Przykład | Zachowanie |
+| Tor | Kiedy | Ile pytań |
 |---|---|---|
-| Pomysł inline | `rs-discovery apka do przepisów...` | Pomysł zapisany dosłownie jako punkt wyjścia |
-| Plik z notatkami | `rs-discovery @notes/idea.md` | Skill czyta plik w całości i traktuje go jako pomysł |
-| Bez argumentu | „discovery session" | Skill poprosi o opisanie pomysłu własnymi słowami |
+| **quick** | drobna, lokalna zmiana: tekst, wygląd, jedno pole, oczywisty błąd | 2–4 |
+| **feature** | nowa możliwość albo istotna zmiana w istniejącym produkcie | ok. 6–12 plus jedna runda „adwokata diabła” |
+| **initiative** | nowy moduł, nowy produkt, zmiana architektury | pełny wywiad, ze słownikiem pojęć i decyzjami |
 
-Rozmowa toczy się **w języku użytkownika** (np. po polsku), ale artefakty na dysku są **zawsze po angielsku** — żeby były przenośne między zespołami i narzędziami.
+### 5. Pytania — jedno na raz
 
----
+Zawsze jedno pytanie, zawsze z rekomendowaną odpowiedzią na początku i opcją „nie wiem, wróćmy do tego” na końcu. Skill dopytuje, gdy odpowiedź jest ogólna („wszyscy”, „zawsze”), i nie wymyśla niczego, czego nie powiedziałeś.
 
-## Przebieg sesji — krok po kroku
+### 6. Szkic issue
 
-### Krok 0 — triage zakresu
+Skill pokazuje **cały** szkic issue i pyta, co dodać, zmienić lub usunąć. Wskaże też braki, które utrudnią realizację (np. brak kryterium dla przypadku błędu). Możesz je uzupełnić albo świadomie zaakceptować.
 
-Skill ocenia, czy zmiana jest na tyle duża, że pełne discovery ma sens. Jeśli to drobiazg — odsyła do lżejszej ścieżki i kończy.
+### 7. Utworzenie issue
 
-### Krok 0.5 — wykrycie wznowienia
+Skill pyta wprost: „Utworzyć to issue w `<repozytorium>`?”. Dopiero po Twoim „tak” woła Rocksoft Flow i podaje link oraz numer issue. Od tej pory postępy widać na samym issue.
 
-Jeśli istnieje już `context/discovery/discovery-notes.md`, skill proponuje: **wznów od następnej fazy** (rekomendowane), **zacznij od nowa** (stara wersja trafia do archiwum) albo **anuluj**. Ukończone fazy nie są powtarzane — są streszczane jednym zdaniem.
-
-### Krok 0.7 — tożsamość i repozytorium (WYMAGANE)
-
-Przed pytaniami merytorycznymi skill zbiera trzy obowiązkowe pola — bez nich sesja nie idzie dalej:
-
-1. **E-mail klienta** — identyfikuje osobę prowadzącą discovery i służy do pobrania listy repozytoriów z Rocksoft Flow.
-2. **Repozytorium** — skill woła narzędzie MCP `list_repositories` i pokazuje listę repozytoriów przypisanych do e-maila; użytkownik wybiera jedno. Nie ma trybu „bez repozytorium".
-3. **Nazwa projektu / zmiany** — robocza nazwa tego, co szejpujemy.
-
-Po wyborze repozytorium skill pobiera jego kontekst serwer-side (narzędzie MCP `get_repository_context`): `CLAUDE.md`, `context/foundation/tech-stack.md`, `context/prd/prd.md` — o ile istnieją. **Nigdy nie klonuje repo lokalnie** — dostęp do GitHuba ma wyłącznie serwer Rocksoft Flow.
-
-### Krok 1 — wykrycie typu kontekstu
-
-Greenfield czy brownfield — na podstawie sygnałów w katalogu roboczym (historia gita, lockfile'y, manifesty). Wynik jest potwierdzany z użytkownikiem i można go nadpisać.
-
-### Fazy discovery (1–6)
-
-Każda faza działa w tej samej pętli: jedno pytanie na raz, rekomendowana odpowiedź zawsze pierwsza, zawsze dostępna opcja „nie wiem / wróćmy do tego", potwierdzenie decyzji przed zapisem.
-
-| Faza | Co powstaje |
-|---|---|
-| 1. Problem i persona | Wizja, problem, kto go odczuwa i co go to dziś kosztuje. Brownfield: dodatkowo opis obecnego systemu i co **nie może się zepsuć**. |
-| 2. Dostęp i role | Jak użytkownik dostaje się do produktu (login / profil lokalny / klucz / brak) i model ról. Brownfield: skill odczytuje obecny model z kodu i pyta tylko o zmiany. |
-| 3. Pierwszy inkrement i kryteria sukcesu | Pierwszy przepływ end-to-end, który dostarcza realną wartość (może być duży — to nie jest spychanie do minimalnego MVP). Kryteria Primary / Secondary / Guardrails plus swobodna estymata czasowa. |
-| 4. Wymagania funkcjonalne | Lista FR-ów (`FR-001: [Aktor] może [zdolność]`) z priorytetami; brownfield dodaje tag `new / modified / preserved`. Każdy FR przechodzi jedną rundę sokratejskiego challenge'u. Plus przynajmniej jedna user story w Given/When/Then. |
-| 5. Logika biznesowa i ograniczenia | Jedna deklaratywna reguła domenowa, która odróżnia produkt od zwykłego CRUD-a (skill wykrywa anty-wzorzec „pustego CRUD-a" i nazywa go wprost). Plus wymagania niefunkcjonalne. Brownfield: dodatkowo zachowania i kontrakty do zachowania. |
-| 6. Kadrowanie i non-goals | Typ produktu, skala docelowa i jawna lista rzeczy, których ten zakres **nie** buduje. |
-
-Po drodze skill na bieżąco buduje **glosariusz** (język wspólny domeny) i — rzadko, tylko dla decyzji trudnych do odwrócenia — zapisuje **ADR-y**. Wszystko jako sekcje jednego pliku notatek.
-
-### Krok 8 — miękka bramka jakości
-
-Skill sprawdza kompletność notatek (access control, logika biznesowa, non-goals, glosariusz, a dla brownfield — zachowane zachowania) i drukuje scorecard. Braki są nazwane konkretnie, z konsekwencją. Użytkownik może je uzupełnić albo świadomie zaakceptować — bramka ostrzega, ale nie blokuje.
-
-### Krok 9 — domknięcie
-
-Finalny zapis `discovery-notes.md`, przegląd decyzji pod kątem ADR-ów i krótkie podsumowanie sesji.
-
-### Krok 10 — Pull Request ze specyfikacją
-
-Na koniec skill **zawsze pyta** (nigdy nie robi tego automatycznie), czy otworzyć Pull Request ze specyfikacją w repozytorium wybranym w kroku 0.7:
-
-- **„Tak, otwórz PR"** — narzędzie MCP `create_spec_pr` tworzy serwer-side nową gałąź w repozytorium, dodaje do niej `discovery-notes.md` i otwiera PR do gałęzi domyślnej. Specyfikacja **nigdy nie trafia bezpośrednio na main** — zawsze przechodzi przez review. Po sukcesie dostajesz numer PR, nazwę gałęzi i link.
-- **„Jeszcze nie — zostaw lokalnie"** — plik zostaje w `context/discovery/discovery-notes.md`; PR można otworzyć później, ponownie uruchamiając `rs-discovery`.
+Jeśli w danej chwili Rocksoft Flow nie ma jeszcze narzędzia do zakładania issue, skill wydrukuje gotowy tytuł i treść, żebyś mógł przekazać je swojemu opiekunowi w Rocksoft.
 
 ---
 
-## Co dostajesz na końcu
+## Co zawiera issue
 
-Jeden plik: `context/discovery/discovery-notes.md` (w bieżącym katalogu roboczym). Zawiera:
+Stały układ, żeby czytał je zarówno człowiek, jak i automat:
 
-- **frontmatter** — projekt, klient (e-mail), repozytorium, typ kontekstu, typ produktu, skala, estymata, checkpoint sesji,
-- **sekcje produktowe** — Vision & Problem, User & Persona, Access Control, Success Criteria, Functional Requirements, User Stories, Business Logic, Non-Functional Requirements, Non-Goals (brownfield dodatkowo: Current System oraz Constraints & Preserved Behavior),
-- **Glossary** — kanoniczne terminy domenowe z listą synonimów do unikania,
-- **Decisions** — ADR-y (tylko decyzje trudne do odwrócenia, zaskakujące bez kontekstu i będące realnym trade-offem),
-- bloki informacyjne — Open Questions, Quality cross-check, `Forward: tech-stack` (zaparkowane opinie o stacku — discovery samo **nigdy** nie rekomenduje frameworka, bazy ani platformy).
-
-Plik jest checkpointowany po każdej fazie, więc sesję można przerwać w dowolnym momencie i wznowić później.
+- **Summary** — czego chcesz i dlaczego teraz,
+- **Problem & context** — kto odczuwa problem, kiedy, ile to kosztuje; obecny stan systemu,
+- **Scope** — pierwszy przyrost end-to-end oraz jawna lista rzeczy poza zakresem,
+- **Requirements** i **Acceptance criteria** — wymagania z priorytetami i kryteria w formie Given/When/Then,
+- **Constraints & preserved behavior** — co nie może się zepsuć,
+- **Non-functional requirements**, **Open questions**,
+- dla większych tematów: **Access & roles**, **Success criteria**, **Business rule**, **Glossary**, **Decisions**,
+- **Metadata** — klient, repozytorium, tor, wersja pluginu.
 
 ---
 
 ## Zasady, na które możesz liczyć
 
-- **Skill niczego nie wymyśla** — zapisuje tylko to, co powiedziałeś; brakujące wartości dopytuje.
-- **Jedno pytanie na raz** — żadnych ścian pytań.
-- **Rekomendacja zawsze pierwsza** — plus opcja „nie wiem", więc nigdy nie musisz zgadywać.
-- **Brownfield: kod przed pytaniem** — skill czyta repozytorium zamiast kazać Ci je opisywać.
-- **Neutralność technologiczna** — żadnych pytań o framework, bazę czy hosting; to decyzje późniejsze.
-- **Żadnych cichych wysyłek** — wszystko, co idzie do Rocksoft Flow (PR), jest jawnie potwierdzane przez Ciebie.
-- **Brak lokalnego gita** — cały dostęp do repozytoriów (odczyt kontekstu, otwarcie PR) odbywa się serwer-side przez Rocksoft Flow.
+- **Nic nie jest wysyłane bez Twojej zgody.** Najpierw pełny szkic, potem pytanie, potem jedno wywołanie.
+- **Skill niczego nie wymyśla.** Brakujące informacje dopytuje albo zostawia w Open questions.
+- **Bez technologii.** Skill nie pyta o framework, bazę czy hosting. Jeśli sam masz zdanie, trafi ono do osobnej sekcji notatek technicznych.
+- **Bez plików i gita po Twojej stronie.** Wszystko dzieje się w rozmowie i po stronie Rocksoft Flow.
 
 ---
 
-## Wymagania i rozwiązywanie problemów
+## Rozwiązywanie problemów
 
 | Sytuacja | Co się dzieje | Co zrobić |
 |---|---|---|
-| Rocksoft Flow MCP nieosiągalny | Sesja zatrzymuje się na kroku 0.7b z komunikatem błędu | Sprawdź połączenie / ponów próbę |
-| Brak repozytoriów dla e-maila | Sesja zatrzymuje się | Poproś admina Rocksoft o przypisanie repozytorium do Twojego e-maila |
-| Narzędzie `list_repositories` / `create_spec_pr` niewystawione | Skill mówi o tym wprost i zatrzymuje się (bez obejść) | Poproś admina Rocksoft Flow o dopięcie narzędzia w n8n |
-| Brak plików kontekstu w repo (`CLAUDE.md` itd.) | To normalne — discovery rusza od zera | Nic; skill o tym poinformuje |
-| `Bad credentials` przy otwieraniu PR | Token GitHub po stronie n8n nie ma uprawnień do repo | Skontaktuj się z adminem Rocksoft |
+| Konnektor Rocksoft Flow niepołączony | Skill nie może pobrać repozytoriów | Ustawienia → Plugins → Rocksoft Flow → Connect; na Team/Enterprise poproś administratora |
+| Brak repozytoriów dla e-maila | Skill zatrzymuje się po kroku 1 | Poproś opiekuna w Rocksoft o przypisanie repozytorium do Twojego e-maila |
+| Narzędzie `create_feature_issue` niedostępne | Skill drukuje gotową treść issue | Prześlij ją opiekunowi w Rocksoft |
+| Błąd „repository not assigned” | E-mail i repozytorium nie pasują do siebie | Sprawdź e-mail, wróć do wyboru repozytorium |
+| Brak plików kontekstu w repozytorium | Normalne — skill oprze się na rozmowie | Nic |
 
 ---
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.1.9`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.2.0`.
