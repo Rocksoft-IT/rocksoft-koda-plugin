@@ -125,5 +125,5 @@ One to three sentences: context, decision, why.
 - **Product type:** <web app / API / … or "unchanged">   <!-- initiative -->
 - **Target scale:** <small / medium / large / enterprise or "unchanged">   <!-- initiative -->
 - **Client's size estimate:** <their words, if given>
-- **Created with:** rocksoft-koda rs-feature 0.2.0
+- **Created with:** rocksoft-koda rs-feature 0.3.0
 ```

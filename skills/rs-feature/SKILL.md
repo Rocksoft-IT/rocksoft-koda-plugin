@@ -8,11 +8,14 @@ description: >
   orchestrator: identifies the client, picks the repository, reads the repo
   context, chooses how deep the conversation needs to be (quick / feature /
   initiative), brainstorms and plans together with the client, drafts the issue
-  and submits it only after explicit confirmation. Use for ANY request to add,
-  change, improve, or fix something in a Rocksoft-managed project. Trigger
-  phrases (any language): "chcę dodać", "potrzebujemy", "nowa funkcja", "zmiana
-  w", "popraw", "add a feature", "I need", "we want", "change how", "new
-  feature", "new project", "discovery", "shape an idea".
+  and submits it only after explicit confirmation. Also answers "what's the
+  status of my request / issue #N?" by reading Koda's progress on an issue it
+  created. Use for ANY request to add, change, improve, or fix something in a
+  Rocksoft-managed project, and for any question about the progress of such a
+  request. Trigger phrases (any language): "chcę dodać", "potrzebujemy", "nowa
+  funkcja", "zmiana w", "popraw", "jaki jest status", "co z moim zgłoszeniem",
+  "add a feature", "I need", "we want", "change how", "new feature", "new
+  project", "discovery", "shape an idea", "status of my issue", "any progress".
 argument-hint: "[freeform description of the feature or change]"
 allowed-tools:
   - mcp__*
@@ -40,7 +43,7 @@ Design every step for the weaker environment:
   options, the recommended option first and marked "(recommended)", and a last
   option "Not sure / let's come back to this".
 - **Tools are the MCP tools only:** `list_repositories`,
-  `get_repository_context`, `create_feature_issue`. Read a tool's schema before
+  `get_repository_context`, `create_feature_issue`, `get_issue_status`. Read a tool's schema before
   the first call and pass arguments exactly as it expects.
 
 ## Core principles
@@ -74,6 +77,9 @@ Design every step for the weaker environment:
 
 ## Initial response
 
+- **If the client asks about the status or progress** of an earlier request
+  (an issue number, an issue link, "my request about invoices", "any
+  progress?"), skip the feature flow and go to **Status check** below.
 - **If the client's message already describes the request**, keep it verbatim
   as the *initial request* and go straight to Step 0. Do not paraphrase it back
   yet.
@@ -221,7 +227,8 @@ On yes, call `create_feature_issue` with:
 On success print the link, number, and repository:
 
 > Created issue #<n> in <owner>/<repo>: <url>
-> Rocksoft picks it up from here. You'll get updates on the issue itself.
+> Rocksoft picks it up from here. You'll get updates on the issue itself, and
+> you can ask me for the status at any time ("what's the status of #<n>?").
 
 Handle failures plainly:
 
@@ -238,13 +245,63 @@ Handle failures plainly:
 On no: "Understood — nothing was sent." Keep the draft in the conversation so
 the client can come back to it; do not resend it unless asked.
 
-Step 6 is the last step. Do not propose next actions beyond it.
+Step 6 is the last step of the feature flow. Do not propose next actions
+beyond it. If the client asks about progress right away, run the Status check;
+right after creation `queued` is the expected answer.
+
+## Status check
+
+Read-only. Answers "what's happening with my request?" for issues created in
+the client's repository. Never changes anything and never re-sends an issue.
+
+1. **Identity and repository.** Reuse the e-mail and repository already
+   confirmed in this conversation. Otherwise run Step 0 and Step 1 as usual;
+   if the client gave an issue link, the `owner/repo` in it must match one of
+   the repositories `list_repositories` returned — pick that one and confirm
+   it, never build a `git_url` from the link.
+2. **Which issue.** Take the number from the client's message or link, or the
+   issue created earlier in this conversation. If none is known, call
+   `get_issue_status` without `issue_number`, show the returned issues as a
+   numbered list (`#<n> <title> — <status in plain words>`, newest first) and
+   ask which one to open, or answer from the list if that already settles the
+   question.
+3. **Call** `get_issue_status` with `git_url`, `email` and `issue_number`.
+4. **Report in the client's language**, in at most five lines: the status in
+   plain words (table below), when something last happened, and the links
+   the client needs. Quote `latest_koda_comment.body` only when it asks the
+   client something or tells them what to check — never paste raw JSON.
+
+| `status` | Tell the client |
+|---|---|
+| `queued` | The request is in the queue; work hasn't started yet. |
+| `in_progress` | Koda is working on it (or on their latest feedback). Nothing to do for now. |
+| `needs_input` | Koda has questions. Show them from `latest_koda_comment.body` and say the answer goes in a comment under the issue (link). |
+| `ready_for_review` | The work is ready. List each open PR with its link; the ones to check are named in the latest Koda comment. |
+| `failed` | This attempt didn't finish. A comment under the issue retries it; for anything urgent, contact Rocksoft. Never guess the cause. |
+| `done` | Completed. List merged PRs if any. |
+| `closed` | Closed without completion. Suggest asking the Rocksoft contact why. |
+| `not_tracked` | This issue isn't one Koda works on (no `rs-feature` label). |
+
+Handle failures plainly:
+
+- **Tool not exposed / not found:** "Checking the status from here isn't
+  available yet." Give the issue link (if known) and say progress shows in the
+  comments under it.
+- **Authorization error or issue not found:** repeat the message, name the
+  e-mail, repository and issue number used, and offer to pick another.
+- **Any other error:** quote it and offer one retry.
+
+Do not offer to change, comment on, or merge anything from the status check —
+replying to Koda's questions or reviewing PRs happens on GitHub. If the client
+wants something new or different, that is a new request: start the feature
+flow at Step 3 (identity and repository are already known).
 
 ## Guardrails
 
 1. **One artifact, one place.** The issue is the only output. Never write local
    files, never open PRs, never call `create_spec_pr` or `create_change_pr`
-   even if they are exposed.
+   even if they are exposed. `get_issue_status` is the only other call, and it
+   is read-only.
 2. **Repository is mandatory and comes from Rocksoft Flow.** No free-text repo
    names, no guessing `git_url`, no fallback repository.
 3. **No silent sends.** Draft shown in full, explicit yes, then one tool call.

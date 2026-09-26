@@ -4,8 +4,8 @@ Plugin do Claude (Claude Desktop, claude.ai, Claude Code), który zamienia proś
 
 ## Co zawiera
 
-- **Skill `rs-feature`** — jedyny punkt wejścia. Identyfikuje klienta, wybiera repozytorium, czyta kontekst projektu, dobiera głębokość rozmowy (quick / feature / initiative), prowadzi brainstorming i planowanie, a na końcu — po jawnym potwierdzeniu — tworzy issue przez Rocksoft Flow. Rozmowa w języku klienta, issue po angielsku.
-- **MCP `rocksoft-mcp`** — połączenie HTTPS z `https://flow.rocksoft.co/mcp/...`. Skill używa trzech narzędzi: `list_repositories`, `get_repository_context`, `create_feature_issue`. Kontrakt: [docs/flow-contract.md](docs/flow-contract.md).
+- **Skill `rs-feature`** — jedyny punkt wejścia. Identyfikuje klienta, wybiera repozytorium, czyta kontekst projektu, dobiera głębokość rozmowy (quick / feature / initiative), prowadzi brainstorming i planowanie, a na końcu — po jawnym potwierdzeniu — tworzy issue przez Rocksoft Flow. Rozmowa w języku klienta, issue po angielsku. Na pytanie „jaki jest status?” odczytuje postęp Kody na założonym issue.
+- **MCP `rocksoft-mcp`** — połączenie HTTPS z `https://flow.rocksoft.co/mcp/...`. Skill używa czterech narzędzi: `list_repositories`, `get_repository_context`, `create_feature_issue`, `get_issue_status` (tylko odczyt). Kontrakt: [docs/flow-contract.md](docs/flow-contract.md).
 
 Plugin nie czyta ani nie zapisuje plików na komputerze klienta i nie potrzebuje gita. Cały dostęp do repozytoriów odbywa się po stronie Rocksoft Flow.
 
@@ -34,7 +34,13 @@ W czacie wystarczy opisać, czego potrzebujesz:
 Chcę, żeby klienci mogli pobierać faktury jako PDF z panelu.
 ```
 
-Claude uruchomi `rs-feature`, potwierdzi Twój e-mail i repozytorium, dobierze tor rozmowy, zada pytania po kolei, pokaże pełny szkic issue i zapyta, czy je utworzyć. Szczegóły w [USAGE.md](USAGE.md).
+Claude uruchomi `rs-feature`, potwierdzi Twój e-mail i repozytorium, dobierze tor rozmowy, zada pytania po kolei, pokaże pełny szkic issue i zapyta, czy je utworzyć. Później możesz zapytać o postęp:
+
+```text
+Jaki jest status issue #123?
+```
+
+Szczegóły w [USAGE.md](USAGE.md).
 
 ## Struktura
 
@@ -60,4 +66,4 @@ Uwierzytelnianie klienta przez proxy OAuth (login Microsoft) i autoryzacja per r
 
 ## Wersja
 
-`0.2.0`
+`0.3.0`

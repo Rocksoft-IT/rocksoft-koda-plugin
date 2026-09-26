@@ -4,8 +4,8 @@ Plugin `rocksoft-koda` pozwala zgłosić Rocksoftowi nową funkcjonalność lub 
 
 Po instalacji w Claude dostępne są dwie rzeczy:
 
-1. **Skill `rs-feature`** — prowadzi rozmowę i tworzy issue.
-2. **Konnektor `rocksoft-mcp`** — połączenie z Rocksoft Flow (`flow.rocksoft.co`), które listuje Twoje repozytoria, czyta kontekst projektu i zakłada issue.
+1. **Skill `rs-feature`** — prowadzi rozmowę, tworzy issue i odpowiada na pytania o jego status.
+2. **Konnektor `rocksoft-mcp`** — połączenie z Rocksoft Flow (`flow.rocksoft.co`), które listuje Twoje repozytoria, czyta kontekst projektu, zakłada issue i odczytuje postęp prac.
 
 ---
 
@@ -92,6 +92,31 @@ Jeśli w danej chwili Rocksoft Flow nie ma jeszcze narzędzia do zakładania iss
 
 ---
 
+## Jak sprawdzić status
+
+Zapytaj w czacie — w tej samej rozmowie albo w nowej:
+
+```text
+Jaki jest status issue #123?
+```
+
+```text
+Co się dzieje z moimi zgłoszeniami?
+```
+
+Skill potwierdzi e-mail i repozytorium (jeśli jeszcze ich nie zna) i odczyta postęp przez Rocksoft Flow. Bez numeru pokaże listę ostatnich zgłoszeń z ich statusem. Status sprawdza się tylko do odczytu — skill niczego nie zmienia.
+
+| Status | Co oznacza | Co zrobić |
+|---|---|---|
+| w kolejce | praca jeszcze się nie zaczęła | nic, poczekaj |
+| w toku | Koda pracuje nad zgłoszeniem albo nad Twoimi uwagami | nic, poczekaj |
+| czeka na Twoją odpowiedź | Koda ma pytania | odpowiedz w komentarzu pod issue |
+| gotowe do sprawdzenia | są PR-y do przejrzenia | sprawdź PR-y wskazane w komentarzu Kody |
+| nie udało się | ta próba się nie powiodła | skomentuj issue, żeby ponowić, albo skontaktuj się z Rocksoft |
+| zakończone | praca jest zrobiona | nic |
+
+---
+
 ## Co zawiera issue
 
 Stały układ, żeby czytał je zarówno człowiek, jak i automat:
@@ -125,9 +150,10 @@ Stały układ, żeby czytał je zarówno człowiek, jak i automat:
 | Narzędzie `create_feature_issue` niedostępne | Skill drukuje gotową treść issue | Prześlij ją opiekunowi w Rocksoft |
 | Błąd „repository not assigned” | E-mail i repozytorium nie pasują do siebie | Sprawdź e-mail, wróć do wyboru repozytorium |
 | Brak plików kontekstu w repozytorium | Normalne — skill oprze się na rozmowie | Nic |
+| Narzędzie `get_issue_status` niedostępne | Skill poda link do issue | Postęp sprawdzisz w komentarzach pod issue |
 
 ---
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.2.0`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.3.0`.
