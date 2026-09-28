@@ -25,7 +25,7 @@ Na planach Team i Enterprise plugin i konnektor dodaje administrator Twojej orga
 
 ```bash
 claude plugin marketplace add https://github.com/Rocksoft-IT/rocksoft-koda-plugin
-claude plugin install rocksoft-koda@rocksoft
+claude plugin install rocksoft-koda@rocksoft-koda
 ```
 
 ---
