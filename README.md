@@ -23,7 +23,7 @@ Plugin jest dystrybuowany **wyłącznie przez to repozytorium GitHub**, które p
 
 ```bash
 claude plugin marketplace add https://github.com/Rocksoft-IT/rocksoft-koda-plugin
-claude plugin install rocksoft-koda@rocksoft
+claude plugin install rocksoft-koda@rocksoft-koda
 ```
 
 ## Użycie
