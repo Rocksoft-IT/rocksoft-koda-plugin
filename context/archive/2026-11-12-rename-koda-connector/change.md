@@ -1,10 +1,10 @@
 ---
 change_id: rename-koda-connector
 title: Rename the MCP connector key from rocksoft-mcp to rocksoft-koda
-status: impl_reviewed
+status: archived
 created: 2026-11-12
 updated: 2026-11-12
-archived_at: null
+archived_at: 2026-11-12T20:30:44Z
 ---
 
 ## Notes
