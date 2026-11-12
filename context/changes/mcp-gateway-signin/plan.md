@@ -256,9 +256,9 @@ remaining e-mail-collecting code path.
 
 ### Phase 1: Point at the authenticated gateway
 #### Automated
-- [ ] 1.1 `.mcp.json` stays valid JSON
-- [ ] 1.2 `.mcp.json` points at `https://mcp.rocksoft.pl/koda/`
-- [ ] 1.3 `.mcp.json` no longer references `flow.rocksoft.co`
+- [x] 1.1 `.mcp.json` stays valid JSON
+- [x] 1.2 `.mcp.json` points at `https://mcp.rocksoft.pl/koda/`
+- [x] 1.3 `.mcp.json` no longer references `flow.rocksoft.co`
 
 ### Phase 2: Document the gateway contract
 #### Automated
