@@ -269,16 +269,16 @@ remaining e-mail-collecting code path.
 
 ### Phase 3: Remove the e-mail step from rs-feature
 #### Automated
-- [x] 3.1 `SKILL.md` no longer asks the client for their e-mail
-- [x] 3.2 `SKILL.md` no longer carries an e-mail value from Step 0 into later steps
-- [x] 3.3 `SKILL.md` documents the `pending` tenant outcome
-- [x] 3.4 `SKILL.md` tells the client to authorize via `/mcp`
+- [x] 3.1 `SKILL.md` no longer asks the client for their e-mail — bc2bc0d
+- [x] 3.2 `SKILL.md` no longer carries an e-mail value from Step 0 into later steps — bc2bc0d
+- [x] 3.3 `SKILL.md` documents the `pending` tenant outcome — bc2bc0d
+- [x] 3.4 `SKILL.md` tells the client to authorize via `/mcp` — bc2bc0d
 #### Manual
 - [ ] 3.5 A read-through confirms no remaining code path asks for or sends an e-mail
 
 ### Phase 4: Update docs and bump the version
 #### Automated
-- [ ] 4.1 `.claude-plugin/plugin.json` version is `0.3.0`
-- [ ] 4.2 `README.md` states version `0.3.0`
-- [ ] 4.3 `USAGE.md` states version `0.3.0`
-- [ ] 4.4 `.claude-plugin/plugin.json` no longer states `0.2.1`
+- [x] 4.1 `.claude-plugin/plugin.json` version is `0.3.0`
+- [x] 4.2 `README.md` states version `0.3.0`
+- [x] 4.3 `USAGE.md` states version `0.3.0`
+- [x] 4.4 `.claude-plugin/plugin.json` no longer states `0.2.1`

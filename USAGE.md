@@ -5,7 +5,7 @@ Plugin `rocksoft-koda` pozwala zgłosić Rocksoftowi nową funkcjonalność lub 
 Po instalacji w Claude dostępne są dwie rzeczy:
 
 1. **Skill `rs-feature`** — prowadzi rozmowę i tworzy issue.
-2. **Konnektor `rocksoft-mcp`** — połączenie z Rocksoft Flow (`flow.rocksoft.co`), które listuje Twoje repozytoria, czyta kontekst projektu i zakłada issue.
+2. **Konnektor `rocksoft-mcp`** — połączenie z bramką Rocksoft (`mcp.rocksoft.pl`), które listuje Twoje repozytoria, czyta kontekst projektu i zakłada issue. Logujesz się raz, kontem służbowym Microsoft, przez `/mcp` — żadnych kluczy czy sekretów po Twojej stronie.
 
 ---
 
@@ -17,9 +17,9 @@ Plugin instaluje się **bezpośrednio z repozytorium GitHub** `Rocksoft-IT/rocks
 
 1. Otwórz Ustawienia → Plugins → Browse plugins.
 2. Dodaj marketplace z GitHuba: `Rocksoft-IT/rocksoft-koda-plugin`.
-3. Zainstaluj i włącz plugin `rocksoft-koda`, a przy konnektorze Rocksoft Flow kliknij **Connect**.
+3. Zainstaluj i włącz plugin `rocksoft-koda`, a przy konnektorze Rocksoft Flow kliknij **Connect** i zaloguj się kontem służbowym Microsoft przez `/mcp`.
 
-Na planach Team i Enterprise plugin i konnektor dodaje administrator Twojej organizacji. Poproś go o instalację, jeśli nie widzisz pluginu na liście.
+Na planach Team i Enterprise plugin i konnektor dodaje administrator Twojej organizacji. Poproś go o instalację, jeśli nie widzisz pluginu na liście. Dostęp dla Twojej organizacji wymaga też ręcznej akceptacji przez Rocksoft — patrz niżej, sekcja "Rozwiązywanie problemów".
 
 ### Claude Code
 
@@ -56,7 +56,7 @@ Rozmowa toczy się **w Twoim języku**. Issue powstaje **po angielsku**, żeby z
 
 ### 1. Kto zgłasza
 
-Skill prosi o Twój e-mail (albo proponuje ten, który już zna) i potwierdza go. E-mail jest kluczem do listy repozytoriów, do których masz dostęp w Rocksoft Flow.
+Nic do zrobienia — Twoja tożsamość pochodzi z logowania kontem służbowym Microsoft przez `/mcp` (konnektor **Connect**). Skill nie pyta o e-mail i nigdy go nie wysyła; bramka Rocksoft dołącza zweryfikowaną tożsamość do każdego wywołania i na jej podstawie dobiera listę repozytoriów, do których masz dostęp.
 
 ### 2. Które repozytorium
 
@@ -120,14 +120,16 @@ Stały układ, żeby czytał je zarówno człowiek, jak i automat:
 
 | Sytuacja | Co się dzieje | Co zrobić |
 |---|---|---|
-| Konnektor Rocksoft Flow niepołączony | Skill nie może pobrać repozytoriów | Ustawienia → Plugins → Rocksoft Flow → Connect; na Team/Enterprise poproś administratora |
-| Brak repozytoriów dla e-maila | Skill zatrzymuje się po kroku 1 | Poproś opiekuna w Rocksoft o przypisanie repozytorium do Twojego e-maila |
+| Konnektor Rocksoft Flow niepołączony | Skill nie widzi żadnych narzędzi — nie jesteś zalogowany | Ustawienia → Plugins → Rocksoft Flow → Connect, zaloguj się kontem służbowym Microsoft przez `/mcp`; na Team/Enterprise poproś administratora |
+| Dostęp Twojej organizacji oczekuje na akceptację (`pending`) | Skill informuje, że dostęp czeka na zatwierdzenie przez Rocksoft, i (jeśli rozmowa już trwała) drukuje szkic issue do przekazania dalej | Poczekaj na akceptację albo prześlij wydrukowany szkic opiekunowi w Rocksoft |
+| Dostęp odrzucony lub cofnięty (`not_allowed` / `revoked`) | Skill zatrzymuje się i informuje o braku dostępu | Skontaktuj się ze swoim opiekunem w Rocksoft |
+| Brak repozytoriów dla Twojego konta | Skill zatrzymuje się po kroku 1 | Poproś opiekuna w Rocksoft o przypisanie repozytorium do Twojego konta |
 | Narzędzie `create_feature_issue` niedostępne | Skill drukuje gotową treść issue | Prześlij ją opiekunowi w Rocksoft |
-| Błąd „repository not assigned” | E-mail i repozytorium nie pasują do siebie | Sprawdź e-mail, wróć do wyboru repozytorium |
+| Błąd „repository not assigned” | Zalogowane konto i repozytorium nie pasują do siebie | Wróć do wyboru repozytorium albo skontaktuj się z opiekunem w Rocksoft |
 | Brak plików kontekstu w repozytorium | Normalne — skill oprze się na rozmowie | Nic |
 
 ---
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.2.0`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.3.0`.
