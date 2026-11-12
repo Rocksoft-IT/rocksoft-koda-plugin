@@ -262,17 +262,17 @@ remaining e-mail-collecting code path.
 
 ### Phase 2: Document the gateway contract
 #### Automated
-- [x] 2.1 No tool table row in `docs/flow-contract.md` still marks `email` required
-- [x] 2.2 `docs/flow-contract.md` documents the `pending` outcome
-- [x] 2.3 `docs/flow-contract.md` documents the `not_allowed` outcome
-- [x] 2.4 `docs/flow-contract.md` documents the `revoked` outcome
+- [x] 2.1 No tool table row in `docs/flow-contract.md` still marks `email` required — 4ea687a
+- [x] 2.2 `docs/flow-contract.md` documents the `pending` outcome — 4ea687a
+- [x] 2.3 `docs/flow-contract.md` documents the `not_allowed` outcome — 4ea687a
+- [x] 2.4 `docs/flow-contract.md` documents the `revoked` outcome — 4ea687a
 
 ### Phase 3: Remove the e-mail step from rs-feature
 #### Automated
-- [ ] 3.1 `SKILL.md` no longer asks the client for their e-mail
-- [ ] 3.2 `SKILL.md` no longer carries an e-mail value from Step 0 into later steps
-- [ ] 3.3 `SKILL.md` documents the `pending` tenant outcome
-- [ ] 3.4 `SKILL.md` tells the client to authorize via `/mcp`
+- [x] 3.1 `SKILL.md` no longer asks the client for their e-mail
+- [x] 3.2 `SKILL.md` no longer carries an e-mail value from Step 0 into later steps
+- [x] 3.3 `SKILL.md` documents the `pending` tenant outcome
+- [x] 3.4 `SKILL.md` tells the client to authorize via `/mcp`
 #### Manual
 - [ ] 3.5 A read-through confirms no remaining code path asks for or sends an e-mail
 

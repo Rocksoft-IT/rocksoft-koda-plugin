@@ -42,6 +42,29 @@ Design every step for the weaker environment:
 - **Tools are the MCP tools only:** `list_repositories`,
   `get_repository_context`, `create_feature_issue`. Read a tool's schema before
   the first call and pass arguments exactly as it expects.
+- **Identity comes from the gateway, not the chat.** The client signs in once
+  to Rocksoft Koda with their Microsoft work account via `/mcp`; every tool
+  call carries that verified identity automatically. Never ask for or send an
+  e-mail.
+
+## Handling tenant-access outcomes
+
+Any of the three tools (`list_repositories`, `get_repository_context`,
+`create_feature_issue`) can answer with a tenant-access denial instead of its
+normal result. Check for this before interpreting the rest of the response:
+
+- **`{ error: "pending" }`:** tell the client access for their organization is
+  waiting for Rocksoft's approval ("Your organization's access is pending
+  Rocksoft's approval — I can't continue until it's granted."). If a draft is
+  already in progress, print it in full right there so nothing is lost, and
+  tell the client to send it to their Rocksoft contact in the meantime (AC-02).
+  Stop; do not retry automatically.
+- **`{ error: "not_allowed" }` or `{ error: "revoked" }`:** tell the client
+  their organization does not currently have access and to contact their
+  Rocksoft contact. Stop.
+- **No tools exposed at all (not signed in):** tell the client to authorize
+  Rocksoft Koda via `/mcp` with their Microsoft work account, then try again
+  (AC-03). Stop.
 
 ## Core principles
 
@@ -87,28 +110,22 @@ Design every step for the weaker environment:
 
 ## Process
 
-### Step 0: Identify the client (interim: confirmed e-mail)
+### Step 0: Check sign-in
 
-The client's e-mail is the key Rocksoft Flow uses to find their repositories.
+No question, no confirmation, no e-mail. The client's identity is whatever
+Microsoft work account they signed in with via `/mcp`; the gateway attaches it
+to every tool call from here on.
 
-- If a user e-mail is already known from the conversation context, propose it:
-  "I'll use `<email>` as your Rocksoft client identity — correct?" Never use it
-  without this confirmation.
-- Otherwise ask: "What's your e-mail? I use it to look up the repositories
-  assigned to you in Rocksoft Flow." Validate the shape (`@` and a dot in the
-  domain part) and re-ask until valid. If the client refuses, stop: without an
-  e-mail there is nothing to look up.
-
-Keep the e-mail for every later tool call. Do not ask for it twice in one
-conversation.
-
-> Interim note: the e-mail is self-declared in this version. A verified login
-> (OAuth via Rocksoft) replaces this step in a later release; the rest of the
-> flow does not change.
+Before Step 1's first tool call, check whether the connector exposes any
+tools at all. If it exposes none, the client is not signed in: follow "No
+tools exposed at all" under "Handling tenant-access outcomes" above and stop.
+Otherwise go straight to Step 1 — nothing to ask here.
 
 ### Step 1: Pick the repository
 
-Call `list_repositories` with the e-mail. Then:
+Call `list_repositories` (no arguments — the gateway injects the signed-in
+identity). First check the response against "Handling tenant-access outcomes"
+above. Otherwise:
 
 - **Exactly one repository:** say which one and confirm in one line
   ("This will go to `<name>` — right?"). Do not list alternatives that don't
@@ -116,18 +133,20 @@ Call `list_repositories` with the e-mail. Then:
 - **Several:** show them as a numbered list — `<name>` and the description if
   present, in the order returned — and ask the client to pick one. If the
   initial request clearly names one of them, put it first and recommend it.
-- **None:** stop with: "Rocksoft Flow has no repositories assigned to `<email>`
-  yet. Ask your Rocksoft contact to add one, then come back." Offer to re-check
-  with a different e-mail.
+- **None:** stop with: "Rocksoft Flow has no repositories assigned to your
+  account yet. Ask your Rocksoft contact to add one, then come back."
 - **Tool missing or failing:** report the error verbatim in plain language and
   offer a retry. Do not continue without a repository.
 
 Keep `name` and `git_url` exactly as returned; the `git_url` is passed verbatim
-to every later call.
+to every later call. The response's `email` field is the signed-in client's
+address — keep it only for the issue's `client:` metadata (Step 5); never ask
+the client to confirm or restate it.
 
 ### Step 2: Load the repository context
 
-Call `get_repository_context` with the `git_url` (and the e-mail). It returns
+Call `get_repository_context` with the `git_url`. First check the response
+against "Handling tenant-access outcomes" above. Otherwise, it returns
 whatever exists among `CLAUDE.md`, `context/foundation/tech-stack.md`,
 `context/prd/prd.md`; missing files are normal, not an error.
 
@@ -193,6 +212,8 @@ Compose the issue from `references/issue-template.md` — English, sections in
 template order, sections that do not apply omitted (never left as empty
 headers). Title: sentence case, ≤ 80 characters, names the outcome, not the
 activity ("Customers can export invoices as PDF", not "Invoice export work").
+Fill the `client:` metadata value with the e-mail `list_repositories` returned
+for the signed-in account (Step 1) — never a value the client typed.
 
 Print the **complete** draft in chat, then ask: "Anything to add, change, or
 remove before I send it?" Iterate until the client is satisfied. Every change
@@ -212,18 +233,21 @@ name>` now?" Only a clear yes proceeds.
 On yes, call `create_feature_issue` with:
 
 - `git_url`: the repository's `git_url` verbatim
-- `email`: the client e-mail from Step 0
 - `title`: the issue title
 - `body`: the full English markdown body
 - `track`: `quick` | `feature` | `initiative`
 - `labels`: `["rs-feature", "<track>"]`
 
-On success print the link, number, and repository:
+(No `email` argument — the gateway's signed-in identity is the one the tool
+checks against the repository.)
+
+First check the response against "Handling tenant-access outcomes" above.
+Otherwise, on success print the link, number, and repository:
 
 > Created issue #<n> in <owner>/<repo>: <url>
 > Rocksoft picks it up from here. You'll get updates on the issue itself.
 
-Handle failures plainly:
+Handle other failures plainly:
 
 - **Tool not exposed / not found:** say "Rocksoft Flow doesn't expose
   `create_feature_issue` in this session yet, so I can't create the issue
@@ -231,7 +255,7 @@ Handle failures plainly:
   block and tell the client to send it to their Rocksoft contact. This is a
   valid, complete outcome — not an error to apologize for repeatedly.
 - **Authorization / repository mismatch error:** repeat the message, remind the
-  client which e-mail and repository were used, offer to go back to Step 1.
+  client which repository was used, offer to go back to Step 1.
 - **Any other error:** quote it, offer one retry; on a second failure fall back
   to printing the body as above.
 
