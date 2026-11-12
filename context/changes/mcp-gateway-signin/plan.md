@@ -98,7 +98,7 @@ cross-file inconsistency windows (e.g. `SKILL.md` referencing `email` while
 ## Increments
 | # | Name | Phases | Depends on | User-visible | Status | PR |
 |---|---|---|---|---|---|---|
-| 1 | MCP gateway sign-in | 1-4 | — | yes | pending | — |
+| 1 | MCP gateway sign-in | 1-4 | — | yes | in-progress | — |
 
 ## Phase 1: Point at the authenticated gateway
 ### Overview
