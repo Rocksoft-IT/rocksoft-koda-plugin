@@ -121,9 +121,9 @@ re-auth flow).
 
 ### Phase 1: Rename the connector key, update docs, bump version
 #### Automated
-- [x] 1.1 `grep -rn "rocksoft-mcp" .mcp.json README.md USAGE.md .claude-plugin/plugin.json skills/rs-feature/SKILL.md docs/` returns no matches
-- [x] 1.2 `grep -q '"rocksoft-koda"' .mcp.json` matches
-- [x] 1.3 `grep -q '"version": "0.3.1"' .claude-plugin/plugin.json` matches
-- [x] 1.4 `grep -q '0.3.1' README.md` and `grep -q '0.3.1' USAGE.md` both match
+- [x] 1.1 `grep -rn "rocksoft-mcp" .mcp.json README.md USAGE.md .claude-plugin/plugin.json skills/rs-feature/SKILL.md docs/` returns no matches — fe58669
+- [x] 1.2 `grep -q '"rocksoft-koda"' .mcp.json` matches — fe58669
+- [x] 1.3 `grep -q '"version": "0.3.1"' .claude-plugin/plugin.json` matches — fe58669
+- [x] 1.4 `grep -q '0.3.1' README.md` and `grep -q '0.3.1' USAGE.md` both match — fe58669
 #### Manual
 - [ ] 1.5 Connector list shows `rocksoft-koda` after update/re-sign-in, and the three tools still work (AC-01, AC-02)
