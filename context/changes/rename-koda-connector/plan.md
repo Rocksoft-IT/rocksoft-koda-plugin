@@ -55,7 +55,7 @@ claim it makes.
 ## Increments
 | # | Name | Phases | Depends on | User-visible | Status | PR |
 |---|---|---|---|---|---|---|
-| 1 | Rename connector key + docs + version | 1 | — | yes | pending | — |
+| 1 | Rename connector key + docs + version | 1 | — | yes | in-progress | — |
 
 ## Phase 1: Rename the connector key, update docs, bump version
 
