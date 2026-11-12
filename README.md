@@ -1,11 +1,11 @@
 # Rocksoft Koda
 
-Plugin do Claude (Claude Desktop, claude.ai, Claude Code), który zamienia prośbę klienta o nową funkcjonalność lub zmianę w gotowe do realizacji issue w jego repozytorium. Jeden skill (`rs-feature`) plus serwer MCP `Rocksoft Flow` (flow.rocksoft.co).
+Plugin do Claude (Claude Desktop, claude.ai, Claude Code), który zamienia prośbę klienta o nową funkcjonalność lub zmianę w gotowe do realizacji issue w jego repozytorium. Jeden skill (`rs-feature`) plus bramka MCP Rocksoft (`mcp.rocksoft.pl`).
 
 ## Co zawiera
 
-- **Skill `rs-feature`** — jedyny punkt wejścia. Identyfikuje klienta, wybiera repozytorium, czyta kontekst projektu, dobiera głębokość rozmowy (quick / feature / initiative), prowadzi brainstorming i planowanie, a na końcu — po jawnym potwierdzeniu — tworzy issue przez Rocksoft Flow. Rozmowa w języku klienta, issue po angielsku.
-- **MCP `rocksoft-mcp`** — połączenie HTTPS z `https://flow.rocksoft.co/mcp/...`. Skill używa trzech narzędzi: `list_repositories`, `get_repository_context`, `create_feature_issue`. Kontrakt: [docs/flow-contract.md](docs/flow-contract.md).
+- **Skill `rs-feature`** — jedyny punkt wejścia. Po zalogowaniu wybiera repozytorium, czyta kontekst projektu, dobiera głębokość rozmowy (quick / feature / initiative), prowadzi brainstorming i planowanie, a na końcu — po jawnym potwierdzeniu — tworzy issue przez Rocksoft Flow. Rozmowa w języku klienta, issue po angielsku.
+- **MCP `rocksoft-mcp`** — połączenie HTTPS z `https://mcp.rocksoft.pl/koda/`, uwierzytelnione logowaniem Microsoft (konto służbowe) przez `/mcp`. Skill używa trzech narzędzi: `list_repositories`, `get_repository_context`, `create_feature_issue` — żadne nie przyjmuje e-maila, tożsamość klienta wstrzykuje bramka. Kontrakt: [docs/flow-contract.md](docs/flow-contract.md).
 
 Plugin nie czyta ani nie zapisuje plików na komputerze klienta i nie potrzebuje gita. Cały dostęp do repozytoriów odbywa się po stronie Rocksoft Flow.
 
@@ -34,7 +34,7 @@ W czacie wystarczy opisać, czego potrzebujesz:
 Chcę, żeby klienci mogli pobierać faktury jako PDF z panelu.
 ```
 
-Claude uruchomi `rs-feature`, potwierdzi Twój e-mail i repozytorium, dobierze tor rozmowy, zada pytania po kolei, pokaże pełny szkic issue i zapyta, czy je utworzyć. Szczegóły w [USAGE.md](USAGE.md).
+Claude uruchomi `rs-feature`, potwierdzi repozytorium (na podstawie Twojego logowania przez `/mcp`), dobierze tor rozmowy, zada pytania po kolei, pokaże pełny szkic issue i zapyta, czy je utworzyć. Szczegóły w [USAGE.md](USAGE.md).
 
 ## Struktura
 
@@ -56,8 +56,8 @@ Claude uruchomi `rs-feature`, potwierdzi Twój e-mail i repozytorium, dobierze t
 
 ## Plan rozwoju
 
-Uwierzytelnianie klienta przez proxy OAuth (login Microsoft) i autoryzacja per repozytorium po stronie n8n — patrz [issue #1](https://github.com/Rocksoft-IT/rocksoft-koda-plugin/issues/1). W obecnej wersji e-mail klienta jest deklarowany i potwierdzany w rozmowie.
+Uwierzytelnianie klienta przez bramkę MCP z logowaniem Microsoft — patrz [issue #1](https://github.com/Rocksoft-IT/rocksoft-koda-plugin/issues/1) — już działa. Dostęp dla nowej organizacji wymaga ręcznej akceptacji przez Rocksoft: pierwsze logowanie zakłada wpis w stanie oczekującym, a skill informuje o tym klienta zamiast kontynuować.
 
 ## Wersja
 
-`0.2.0`
+`0.3.0`
