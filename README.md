@@ -5,7 +5,7 @@ Plugin do Claude (Claude Desktop, claude.ai, Claude Code), który zamienia proś
 ## Co zawiera
 
 - **Skill `rs-feature`** — jedyny punkt wejścia. Po zalogowaniu wybiera repozytorium, czyta kontekst projektu, dobiera głębokość rozmowy (quick / feature / initiative), prowadzi brainstorming i planowanie, a na końcu — po jawnym potwierdzeniu — tworzy issue przez Rocksoft Flow. Rozmowa w języku klienta, issue po angielsku.
-- **MCP `rocksoft-mcp`** — połączenie HTTPS z `https://mcp.rocksoft.pl/koda/`, uwierzytelnione logowaniem Microsoft (konto służbowe) przez `/mcp`. Skill używa trzech narzędzi: `list_repositories`, `get_repository_context`, `create_feature_issue` — żadne nie przyjmuje e-maila, tożsamość klienta wstrzykuje bramka. Kontrakt: [docs/flow-contract.md](docs/flow-contract.md).
+- **MCP `rocksoft-koda`** — połączenie HTTPS z `https://mcp.rocksoft.pl/koda/`, uwierzytelnione logowaniem Microsoft (konto służbowe) przez `/mcp`. Skill używa trzech narzędzi: `list_repositories`, `get_repository_context`, `create_feature_issue` — żadne nie przyjmuje e-maila, tożsamość klienta wstrzykuje bramka. Kontrakt: [docs/flow-contract.md](docs/flow-contract.md). Po aktualizacji pluginu konnektor zmienił nazwę — zaloguj się ponownie przez `/mcp`.
 
 Plugin nie czyta ani nie zapisuje plików na komputerze klienta i nie potrzebuje gita. Cały dostęp do repozytoriów odbywa się po stronie Rocksoft Flow.
 
@@ -43,7 +43,7 @@ Claude uruchomi `rs-feature`, potwierdzi repozytorium (na podstawie Twojego logo
 ├── .claude-plugin/
 │   ├── plugin.json            # manifest pluginu
 │   └── marketplace.json       # definicja marketplace
-├── .mcp.json                  # serwer MCP rocksoft-mcp
+├── .mcp.json                  # serwer MCP rocksoft-koda
 ├── docs/
 │   └── flow-contract.md       # kontrakt narzędzi MCP (dla n8n)
 ├── skills/
@@ -60,4 +60,4 @@ Uwierzytelnianie klienta przez bramkę MCP z logowaniem Microsoft — patrz [iss
 
 ## Wersja
 
-`0.3.0`
+`0.3.1`
