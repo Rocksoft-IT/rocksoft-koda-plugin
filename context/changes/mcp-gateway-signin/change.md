@@ -1,7 +1,7 @@
 ---
 change_id: mcp-gateway-signin
 title: Switch rs-feature to the authenticated Rocksoft MCP gateway sign-in
-status: implementing
+status: implemented
 created: 2026-11-12
 updated: 2026-11-12
 archived_at: null

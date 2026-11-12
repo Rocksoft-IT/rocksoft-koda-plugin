@@ -278,7 +278,7 @@ remaining e-mail-collecting code path.
 
 ### Phase 4: Update docs and bump the version
 #### Automated
-- [x] 4.1 `.claude-plugin/plugin.json` version is `0.3.0`
-- [x] 4.2 `README.md` states version `0.3.0`
-- [x] 4.3 `USAGE.md` states version `0.3.0`
-- [x] 4.4 `.claude-plugin/plugin.json` no longer states `0.2.1`
+- [x] 4.1 `.claude-plugin/plugin.json` version is `0.3.0` — 85188cb
+- [x] 4.2 `README.md` states version `0.3.0` — 85188cb
+- [x] 4.3 `USAGE.md` states version `0.3.0` — 85188cb
+- [x] 4.4 `.claude-plugin/plugin.json` no longer states `0.2.1` — 85188cb
