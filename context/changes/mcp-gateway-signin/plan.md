@@ -256,16 +256,16 @@ remaining e-mail-collecting code path.
 
 ### Phase 1: Point at the authenticated gateway
 #### Automated
-- [x] 1.1 `.mcp.json` stays valid JSON
-- [x] 1.2 `.mcp.json` points at `https://mcp.rocksoft.pl/koda/`
-- [x] 1.3 `.mcp.json` no longer references `flow.rocksoft.co`
+- [x] 1.1 `.mcp.json` stays valid JSON — 3c6b349
+- [x] 1.2 `.mcp.json` points at `https://mcp.rocksoft.pl/koda/` — 3c6b349
+- [x] 1.3 `.mcp.json` no longer references `flow.rocksoft.co` — 3c6b349
 
 ### Phase 2: Document the gateway contract
 #### Automated
-- [ ] 2.1 No tool table row in `docs/flow-contract.md` still marks `email` required
-- [ ] 2.2 `docs/flow-contract.md` documents the `pending` outcome
-- [ ] 2.3 `docs/flow-contract.md` documents the `not_allowed` outcome
-- [ ] 2.4 `docs/flow-contract.md` documents the `revoked` outcome
+- [x] 2.1 No tool table row in `docs/flow-contract.md` still marks `email` required
+- [x] 2.2 `docs/flow-contract.md` documents the `pending` outcome
+- [x] 2.3 `docs/flow-contract.md` documents the `not_allowed` outcome
+- [x] 2.4 `docs/flow-contract.md` documents the `revoked` outcome
 
 ### Phase 3: Remove the e-mail step from rs-feature
 #### Automated
