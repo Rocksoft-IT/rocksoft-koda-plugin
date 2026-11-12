@@ -5,7 +5,7 @@ Plugin `rocksoft-koda` pozwala zgłosić Rocksoftowi nową funkcjonalność lub 
 Po instalacji w Claude dostępne są dwie rzeczy:
 
 1. **Skill `rs-feature`** — prowadzi rozmowę i tworzy issue.
-2. **Konnektor `rocksoft-mcp`** — połączenie z bramką Rocksoft (`mcp.rocksoft.pl`), które listuje Twoje repozytoria, czyta kontekst projektu i zakłada issue. Logujesz się raz, kontem służbowym Microsoft, przez `/mcp` — żadnych kluczy czy sekretów po Twojej stronie.
+2. **Konnektor `rocksoft-koda`** — połączenie z bramką Rocksoft (`mcp.rocksoft.pl`), które listuje Twoje repozytoria, czyta kontekst projektu i zakłada issue. Logujesz się raz, kontem służbowym Microsoft, przez `/mcp` — żadnych kluczy czy sekretów po Twojej stronie. Po aktualizacji pluginu konnektor zmienił nazwę — zaloguj się ponownie przez `/mcp`.
 
 ---
 
@@ -132,4 +132,4 @@ Stały układ, żeby czytał je zarówno człowiek, jak i automat:
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.3.0`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.3.1`.

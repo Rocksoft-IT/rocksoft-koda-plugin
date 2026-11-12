@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "rocksoft-mcp": {
+    "rocksoft-koda": {
       "type": "http",
       "url": "https://mcp.rocksoft.pl/koda/"
     }
