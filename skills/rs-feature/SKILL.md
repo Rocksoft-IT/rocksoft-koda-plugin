@@ -145,10 +145,17 @@ the client to confirm or restate it.
 
 ### Step 2: Load the repository context
 
-Call `get_repository_context` with the `git_url`. First check the response
-against "Handling tenant-access outcomes" above. Otherwise, it returns
-whatever exists among `CLAUDE.md`, `context/foundation/tech-stack.md`,
-`context/prd/prd.md`; missing files are normal, not an error.
+Call `get_repository_context` with the `git_url` and `include_related: true`.
+First check the response against "Handling tenant-access outcomes" above.
+Otherwise, it returns whatever exists among `CLAUDE.md`,
+`context/foundation/tech-stack.md`, `context/prd/prd.md`; missing files are
+normal, not an error. It may also return `related_repositories: [{ name,
+git_url, description, files, missing }]` when the chosen repository has
+configured relations — a repository may appear here even when the client is
+not personally assigned to it in `list_repositories` (Step 1), and it is
+still fair game later in this conversation (Step 6, Guardrail 2). A missing
+`related_repositories` key, or an empty list, means no relations; nothing
+else about this step changes.
 
 Read what came back and summarize it to the client in three to five lines:
 what the product is, who uses it, the main modules or constraints you noticed,
@@ -157,6 +164,19 @@ here on, prefer this context over asking the client to describe their system.
 
 If nothing came back, say so in one sentence ("The repo has no context files
 yet, so I'll rely on what you tell me") and move on.
+
+If `related_repositories` came back non-empty, read each entry's own
+`files`/`missing` the same way as the primary repository's and fold one short
+line per sibling into the recap ("`<name>` also relates to this: ..."). Then
+ask the client once, in plain language, which of the named related
+repositories (if any) this request touches — never assume a "yes" from the
+mere existence of a relation: "This also relates to `<name>` — does this
+request touch it too?" (or, with several, list them and ask which of them).
+Carry the confirmed set forward as **touched repositories**: the primary
+repository plus whichever related ones the client confirmed. When no related
+repositories were named, skip the question entirely — touched repositories is
+just the primary one, and the rest of the conversation is exactly as before
+this change (AC-03).
 
 ### Step 3: Triage and choose the track (the orchestration decision)
 

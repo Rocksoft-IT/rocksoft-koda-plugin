@@ -333,9 +333,9 @@ multi-repository path matches the acceptance criteria.
 
 ### Phase 1: Discover and confirm related repositories
 #### Automated
-- [ ] 1.1 `grep -q 'include_related' skills/rs-feature/SKILL.md`
-- [ ] 1.2 `grep -q 'related_repositories' skills/rs-feature/SKILL.md`
-- [ ] 1.3 `grep -qi 'which of' skills/rs-feature/SKILL.md`
+- [x] 1.1 `grep -q 'include_related' skills/rs-feature/SKILL.md`
+- [x] 1.2 `grep -q 'related_repositories' skills/rs-feature/SKILL.md`
+- [x] 1.3 `grep -qi 'which of' skills/rs-feature/SKILL.md`
 #### Manual
 - [ ] 1.4 A read-through of Step 2 confirms a repository with no relations (or an older server) produces exactly today's conversation, with no new question asked (AC-03)
 
