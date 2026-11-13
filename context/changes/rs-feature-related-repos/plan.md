@@ -134,7 +134,7 @@ Two points left to the implementer as prose, not new tool arguments:
 ## Increments
 | # | Name | Phases | Depends on | User-visible | Status | PR |
 |---|---|---|---|---|---|---|
-| 1 | Related-repositories flow | 1-4 | — | yes | pending | — |
+| 1 | Related-repositories flow | 1-4 | — | yes | in-progress | — |
 
 ## Phase 1: Discover and confirm related repositories
 ### Overview
