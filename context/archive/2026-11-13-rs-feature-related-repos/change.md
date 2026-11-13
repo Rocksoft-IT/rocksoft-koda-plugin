@@ -1,10 +1,10 @@
 ---
 change_id: rs-feature-related-repos
 title: Rs-feature shapes requests across related repositories
-status: impl_reviewed
+status: archived
 created: 2026-11-13
 updated: 2026-11-13
-archived_at: null
+archived_at: 2026-11-13T09:07:42Z
 ---
 
 ## Notes
