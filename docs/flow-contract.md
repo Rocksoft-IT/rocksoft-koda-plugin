@@ -77,7 +77,7 @@ Wejście:
 
 | Pole | Typ | Wymagane | Opis |
 |---|---|---|---|
-| `git_url` | string | tak | Dokładnie to, co zwróciło `list_repositories`. Jedyne źródło prawdy o repozytorium, żadnego fallbacku. |
+| `git_url` | string | tak | Dokładnie to, co zwróciło `list_repositories`, albo jeden z `related_repositories` zwróconych przez `get_repository_context` (patrz "Autoryzacja" niżej). Żadnego innego źródła, żadnego fallbacku. |
 | `title` | string | tak | Tytuł issue, ≤ 80 znaków. |
 | `body` | string | tak | Treść w markdownie, po angielsku, wg `skills/rs-feature/references/issue-template.md`. |
 | `track` | `quick` \| `feature` \| `initiative` | tak | Głębokość rozmowy; trafia do etykiet i metadanych. |
