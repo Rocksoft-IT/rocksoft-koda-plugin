@@ -356,11 +356,11 @@ multi-repository path matches the acceptance criteria.
 
 ### Phase 4: Document the contract and bump the version
 #### Automated
-- [x] 4.1 `! grep -qE '\| *.include_related.* \| *string *\| *tak' docs/flow-contract.md`
-- [x] 4.2 `grep -q 'related_repositories' docs/flow-contract.md`
-- [x] 4.3 `grep -qi 'include_related' docs/flow-contract.md`
-- [x] 4.4 `python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"` succeeds
-- [x] 4.5 `grep -q '"version": "0.4.0"' .claude-plugin/plugin.json`
-- [x] 4.6 `grep -q '0.4.0' README.md`
-- [x] 4.7 `grep -q '0.4.0' USAGE.md`
-- [x] 4.8 `! grep -q '0.3.1' .claude-plugin/plugin.json`
+- [x] 4.1 `! grep -qE '\| *.include_related.* \| *string *\| *tak' docs/flow-contract.md` — 0fa7f43
+- [x] 4.2 `grep -q 'related_repositories' docs/flow-contract.md` — 0fa7f43
+- [x] 4.3 `grep -qi 'include_related' docs/flow-contract.md` — 0fa7f43
+- [x] 4.4 `python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"` succeeds — 0fa7f43
+- [x] 4.5 `grep -q '"version": "0.4.0"' .claude-plugin/plugin.json` — 0fa7f43
+- [x] 4.6 `grep -q '0.4.0' README.md` — 0fa7f43
+- [x] 4.7 `grep -q '0.4.0' USAGE.md` — 0fa7f43
+- [x] 4.8 `! grep -q '0.3.1' .claude-plugin/plugin.json` — 0fa7f43
