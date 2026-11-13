@@ -48,9 +48,25 @@ przez bramkę.
 
 ### `get_repository_context` (istnieje)
 
-Wejście: `{ git_url }`. Wyjście: `{ repository: { owner, repo, git_url },
-files: {...}, missing: [...] }`.
-Bez zmian poza usunięciem `email`. W kolejnej fazie warto dołożyć
+Wejście:
+
+| Pole | Typ | Wymagane | Opis |
+|---|---|---|---|
+| `git_url` | string | tak | Dokładnie to, co zwróciło `list_repositories`. |
+| `include_related` | boolean | nie | Domyślnie `false`. Gdy `true`, odpowiedź może dołożyć `related_repositories` dla repozytoriów, które mają skonfigurowane relacje (Rocksoft-IT/n8n-hosting#130). |
+
+Wyjście: `{ repository: { owner, repo, git_url }, files: {...},
+missing: [...] }`, a przy `include_related: true` opcjonalnie też
+`related_repositories: [{ name, git_url, description, files, missing }]` —
+jedna pozycja na każde powiązane repozytorium, o tym samym kształcie
+`files`/`missing` co główne repozytorium. Pole pojawia się tylko wtedy, gdy
+repozytorium ma skonfigurowane relacje; jego brak lub pusta lista oznaczają
+brak relacji (ta sama konwencja co "brakujące pliki są normalne" dla
+`files`/`missing`). Repozytorium wymienione w `related_repositories` może nie
+należeć do repozytoriów przypisanych zalogowanej dzierżawcy w
+`list_repositories` — mimo to `create_feature_issue` może je targetować (patrz
+niżej).
+Bez innych zmian poza usunięciem `email`. W kolejnej fazie warto dołożyć
 `README.md` i listę plików w `context/`.
 
 ### `create_feature_issue` (NOWE — do zbudowania)
@@ -61,7 +77,7 @@ Wejście:
 
 | Pole | Typ | Wymagane | Opis |
 |---|---|---|---|
-| `git_url` | string | tak | Dokładnie to, co zwróciło `list_repositories`. Jedyne źródło prawdy o repozytorium, żadnego fallbacku. |
+| `git_url` | string | tak | Dokładnie to, co zwróciło `list_repositories`, albo jeden z `related_repositories` zwróconych przez `get_repository_context` (patrz "Autoryzacja" niżej). Żadnego innego źródła, żadnego fallbacku. |
 | `title` | string | tak | Tytuł issue, ≤ 80 znaków. |
 | `body` | string | tak | Treść w markdownie, po angielsku, wg `skills/rs-feature/references/issue-template.md`. |
 | `track` | `quick` \| `feature` \| `initiative` | tak | Głębokość rozmowy; trafia do etykiet i metadanych. |
@@ -73,10 +89,13 @@ zalogowanej sesji (patrz "Tożsamość klienta" powyżej).
 Zachowanie workflow-u:
 
 1. **Autoryzacja:** sprawdź, że zalogowana dzierżawca ma dostęp (patrz
-   "Odmowy dostępu" powyżej) i że `git_url` należy do repozytoriów
-   przypisanych do tej dzierżawcy. Jeśli nie, zwróć `{ error: "repository not
-   assigned to this account" }` i nic nie twórz. To jedyny test
-   bezpieczeństwa w fazie 0, więc nie może być pominięty.
+   "Odmowy dostępu" powyżej) i że `git_url` należy albo do repozytoriów
+   przypisanych bezpośrednio do tej dzierżawcy, albo do `related_repositories`
+   jednego z przypisanych repozytoriów (Rocksoft-IT/n8n-hosting#130) — relacja
+   wystarczy, dzierżawca nie musi mieć repozytorium przypisanego wprost.
+   Jeśli żaden z tych dwóch warunków nie jest spełniony, zwróć `{ error:
+   "repository not assigned to this account" }` i nic nie twórz. To jedyny
+   test bezpieczeństwa w fazie 0, więc nie może być pominięty.
 2. Sparsuj `git_url` na `owner/repo` (SSH i HTTPS).
 3. Utwórz issue przez GitHub API z `title`, `body` i etykietami. Brakujące
    etykiety utwórz (`rs-feature`, `quick`, `feature`, `initiative`).

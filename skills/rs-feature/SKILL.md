@@ -145,10 +145,17 @@ the client to confirm or restate it.
 
 ### Step 2: Load the repository context
 
-Call `get_repository_context` with the `git_url`. First check the response
-against "Handling tenant-access outcomes" above. Otherwise, it returns
-whatever exists among `CLAUDE.md`, `context/foundation/tech-stack.md`,
-`context/prd/prd.md`; missing files are normal, not an error.
+Call `get_repository_context` with the `git_url` and `include_related: true`.
+First check the response against "Handling tenant-access outcomes" above.
+Otherwise, it returns whatever exists among `CLAUDE.md`,
+`context/foundation/tech-stack.md`, `context/prd/prd.md`; missing files are
+normal, not an error. It may also return `related_repositories: [{ name,
+git_url, description, files, missing }]` when the chosen repository has
+configured relations — a repository may appear here even when the client is
+not personally assigned to it in `list_repositories` (Step 1), and it is
+still fair game later in this conversation (Step 6, Guardrail 2). A missing
+`related_repositories` key, or an empty list, means no relations; nothing
+else about this step changes.
 
 Read what came back and summarize it to the client in three to five lines:
 what the product is, who uses it, the main modules or constraints you noticed,
@@ -157,6 +164,19 @@ here on, prefer this context over asking the client to describe their system.
 
 If nothing came back, say so in one sentence ("The repo has no context files
 yet, so I'll rely on what you tell me") and move on.
+
+If `related_repositories` came back non-empty, read each entry's own
+`files`/`missing` the same way as the primary repository's and fold one short
+line per sibling into the recap ("`<name>` also relates to this: ..."). Then
+ask the client once, in plain language, which of the named related
+repositories (if any) this request touches — never assume a "yes" from the
+mere existence of a relation: "This also relates to `<name>` — does this
+request touch it too?" (or, with several, list them and ask which of them).
+Carry the confirmed set forward as **touched repositories**: the primary
+repository plus whichever related ones the client confirmed. When no related
+repositories were named, skip the question entirely — touched repositories is
+just the primary one, and the rest of the conversation is exactly as before
+this change (AC-03).
 
 ### Step 3: Triage and choose the track (the orchestration decision)
 
@@ -215,10 +235,20 @@ activity ("Customers can export invoices as PDF", not "Invoice export work").
 Fill the `client:` metadata value with the e-mail `list_repositories` returned
 for the signed-in account (Step 1) — never a value the client typed.
 
-Print the **complete** draft in chat, then ask: "Anything to add, change, or
-remove before I send it?" Iterate until the client is satisfied. Every change
-the client asks for is applied to the draft; do not argue, but do flag once if a
-change removes something that makes the issue ambiguous for the builder.
+**When "touched repositories" (Step 2) has more than one entry**, draft a
+separate issue body per touched repository instead of one: each is scoped to
+that repository's own slice of the work, with its own Acceptance criteria,
+and carries a `## Related repositories` section listing the sibling
+repositories and one sentence on what changes in each. Print all the drafts
+together, in the proposed deploy order (Step 6), before asking anything else.
+A single touched repository drafts exactly one issue, with no `Related
+repositories` section, exactly as before this change.
+
+Print the **complete** draft (or, for several repositories, all drafts) in
+chat, then ask: "Anything to add, change, or remove before I send it?"
+Iterate until the client is satisfied. Every change the client asks for is
+applied to the draft; do not argue, but do flag once if a change removes
+something that makes the issue ambiguous for the builder.
 
 Before offering to send, run a silent completeness check and name any gap in
 one line each with its consequence (e.g. "No acceptance criterion for the error
@@ -227,13 +257,32 @@ gaps under Open questions.
 
 ### Step 6: Submit through Rocksoft Flow (explicit confirmation)
 
-Ask, in the client's language: "Shall I create this issue in `<repository
-name>` now?" Only a clear yes proceeds.
+**Single touched repository** (today's behavior, unchanged): ask, in the
+client's language: "Shall I create this issue in `<repository name>` now?"
+Only a clear yes proceeds.
 
-On yes, call `create_feature_issue` with:
+**More than one touched repository:** propose a deploy order — which
+repository's issue should land first, e.g. an API before its consumer — and
+reflect it back in one line ("I'll create these in this order: `<repo A>`,
+then `<repo B>` — does that work?"). Then ask the same "Shall I create this
+issue..." question once, covering the whole batch, not once per issue. Only
+a clear yes proceeds.
 
-- `git_url`: the repository's `git_url` verbatim
-- `title`: the issue title
+On yes, for a single repository call `create_feature_issue` once as before.
+For a batch, call `create_feature_issue` once per repository, strictly in the
+confirmed deploy order; before each call, update that issue's `## Related
+repositories` lines: cite `owner/repo#<number>` for every sibling already
+created earlier in the order, and the repository name and title (no number
+yet) for any sibling still to come — there is no tool to edit an issue after
+creation, so a fully cross-linked set only exists once the last issue in the
+order is created. Print each created issue's link as it is created, in order.
+
+Each call uses:
+
+- `git_url`: the repository's `git_url` verbatim — either the chosen
+  repository from Step 1 or one of the related repositories named in Step 2;
+  never any other value (Guardrail 2).
+- `title`: that issue's title
 - `body`: the full English markdown body
 - `track`: `quick` | `feature` | `initiative`
 - `labels`: `["rs-feature", "<track>"]`
@@ -241,7 +290,7 @@ On yes, call `create_feature_issue` with:
 (No `email` argument — the gateway's signed-in identity is the one the tool
 checks against the repository.)
 
-First check the response against "Handling tenant-access outcomes" above.
+First check each response against "Handling tenant-access outcomes" above.
 Otherwise, on success print the link, number, and repository:
 
 > Created issue #<n> in <owner>/<repo>: <url>
@@ -252,15 +301,22 @@ Handle other failures plainly:
 - **Tool not exposed / not found:** say "Rocksoft Flow doesn't expose
   `create_feature_issue` in this session yet, so I can't create the issue
   myself." Then print the final title and body once more in a single code
-  block and tell the client to send it to their Rocksoft contact. This is a
-  valid, complete outcome — not an error to apologize for repeatedly.
+  block (all of them, for a batch) and tell the client to send it to their
+  Rocksoft contact. This is a valid, complete outcome — not an error to
+  apologize for repeatedly.
 - **Authorization / repository mismatch error:** repeat the message, remind the
   client which repository was used, offer to go back to Step 1.
 - **Any other error:** quote it, offer one retry; on a second failure fall back
   to printing the body as above.
+- **Mid-batch failure** (one of several `create_feature_issue` calls fails,
+  after the retry above): stop the batch there — do not call
+  `create_feature_issue` for the remaining repositories and do not retry them
+  automatically. Report in plain language which issues were already created
+  (with their links) and which were not, so the client knows exactly where
+  things stand.
 
-On no: "Understood — nothing was sent." Keep the draft in the conversation so
-the client can come back to it; do not resend it unless asked.
+On no: "Understood — nothing was sent." Keep the draft(s) in the conversation
+so the client can come back to them; do not resend unless asked.
 
 Step 6 is the last step. Do not propose next actions beyond it.
 
@@ -270,7 +326,11 @@ Step 6 is the last step. Do not propose next actions beyond it.
    files, never open PRs, never call `create_spec_pr` or `create_change_pr`
    even if they are exposed.
 2. **Repository is mandatory and comes from Rocksoft Flow.** No free-text repo
-   names, no guessing `git_url`, no fallback repository.
+   names, no guessing `git_url`, no fallback repository. A `git_url` passed to
+   `create_feature_issue` must be either a repository from `list_repositories`
+   (Step 1) or one of the `related_repositories` named in Step 2 — never any
+   other value, even when the client types a repository name or URL
+   themselves.
 3. **No silent sends.** Draft shown in full, explicit yes, then one tool call.
 4. **Track choice is explicit.** Always tell the client which track you are on;
    never drift from quick to a full interview without saying so.
