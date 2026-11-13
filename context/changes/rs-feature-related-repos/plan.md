@@ -341,15 +341,15 @@ multi-repository path matches the acceptance criteria.
 
 ### Phase 2: Draft cross-linked issue bodies
 #### Automated
-- [x] 2.1 `grep -q '## Related repositories' skills/rs-feature/references/issue-template.md`
-- [x] 2.2 `grep -q 'Related repositories' skills/rs-feature/SKILL.md`
+- [x] 2.1 `grep -q '## Related repositories' skills/rs-feature/references/issue-template.md` — b61b0e2
+- [x] 2.2 `grep -q 'Related repositories' skills/rs-feature/SKILL.md` — b61b0e2
 #### Manual
 - [ ] 2.3 A read-through confirms a single-repository request still produces exactly one draft with no `Related repositories` section
 
 ### Phase 3: Propose a deploy order and create cross-linked issues
 #### Automated
-- [ ] 3.1 `grep -qi 'deploy order' skills/rs-feature/SKILL.md`
-- [ ] 3.2 `grep -q 'related_repositories' skills/rs-feature/SKILL.md`
+- [x] 3.1 `grep -qi 'deploy order' skills/rs-feature/SKILL.md`
+- [x] 3.2 `grep -q 'related_repositories' skills/rs-feature/SKILL.md`
 #### Manual
 - [ ] 3.3 A read-through confirms a single-repository request still issues exactly one `create_feature_issue` call after one confirmation (regression check against today's Step 6)
 - [ ] 3.4 A read-through confirms the batch failure path names created issues by link and never auto-retries

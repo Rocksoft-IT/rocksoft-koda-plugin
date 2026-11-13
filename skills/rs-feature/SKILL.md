@@ -257,13 +257,32 @@ gaps under Open questions.
 
 ### Step 6: Submit through Rocksoft Flow (explicit confirmation)
 
-Ask, in the client's language: "Shall I create this issue in `<repository
-name>` now?" Only a clear yes proceeds.
+**Single touched repository** (today's behavior, unchanged): ask, in the
+client's language: "Shall I create this issue in `<repository name>` now?"
+Only a clear yes proceeds.
 
-On yes, call `create_feature_issue` with:
+**More than one touched repository:** propose a deploy order — which
+repository's issue should land first, e.g. an API before its consumer — and
+reflect it back in one line ("I'll create these in this order: `<repo A>`,
+then `<repo B>` — does that work?"). Then ask the same "Shall I create this
+issue..." question once, covering the whole batch, not once per issue. Only
+a clear yes proceeds.
 
-- `git_url`: the repository's `git_url` verbatim
-- `title`: the issue title
+On yes, for a single repository call `create_feature_issue` once as before.
+For a batch, call `create_feature_issue` once per repository, strictly in the
+confirmed deploy order; before each call, update that issue's `## Related
+repositories` lines: cite `owner/repo#<number>` for every sibling already
+created earlier in the order, and the repository name and title (no number
+yet) for any sibling still to come — there is no tool to edit an issue after
+creation, so a fully cross-linked set only exists once the last issue in the
+order is created. Print each created issue's link as it is created, in order.
+
+Each call uses:
+
+- `git_url`: the repository's `git_url` verbatim — either the chosen
+  repository from Step 1 or one of the related repositories named in Step 2;
+  never any other value (Guardrail 2).
+- `title`: that issue's title
 - `body`: the full English markdown body
 - `track`: `quick` | `feature` | `initiative`
 - `labels`: `["rs-feature", "<track>"]`
@@ -271,7 +290,7 @@ On yes, call `create_feature_issue` with:
 (No `email` argument — the gateway's signed-in identity is the one the tool
 checks against the repository.)
 
-First check the response against "Handling tenant-access outcomes" above.
+First check each response against "Handling tenant-access outcomes" above.
 Otherwise, on success print the link, number, and repository:
 
 > Created issue #<n> in <owner>/<repo>: <url>
@@ -282,15 +301,22 @@ Handle other failures plainly:
 - **Tool not exposed / not found:** say "Rocksoft Flow doesn't expose
   `create_feature_issue` in this session yet, so I can't create the issue
   myself." Then print the final title and body once more in a single code
-  block and tell the client to send it to their Rocksoft contact. This is a
-  valid, complete outcome — not an error to apologize for repeatedly.
+  block (all of them, for a batch) and tell the client to send it to their
+  Rocksoft contact. This is a valid, complete outcome — not an error to
+  apologize for repeatedly.
 - **Authorization / repository mismatch error:** repeat the message, remind the
   client which repository was used, offer to go back to Step 1.
 - **Any other error:** quote it, offer one retry; on a second failure fall back
   to printing the body as above.
+- **Mid-batch failure** (one of several `create_feature_issue` calls fails,
+  after the retry above): stop the batch there — do not call
+  `create_feature_issue` for the remaining repositories and do not retry them
+  automatically. Report in plain language which issues were already created
+  (with their links) and which were not, so the client knows exactly where
+  things stand.
 
-On no: "Understood — nothing was sent." Keep the draft in the conversation so
-the client can come back to it; do not resend it unless asked.
+On no: "Understood — nothing was sent." Keep the draft(s) in the conversation
+so the client can come back to them; do not resend unless asked.
 
 Step 6 is the last step. Do not propose next actions beyond it.
 
@@ -300,7 +326,11 @@ Step 6 is the last step. Do not propose next actions beyond it.
    files, never open PRs, never call `create_spec_pr` or `create_change_pr`
    even if they are exposed.
 2. **Repository is mandatory and comes from Rocksoft Flow.** No free-text repo
-   names, no guessing `git_url`, no fallback repository.
+   names, no guessing `git_url`, no fallback repository. A `git_url` passed to
+   `create_feature_issue` must be either a repository from `list_repositories`
+   (Step 1) or one of the `related_repositories` named in Step 2 — never any
+   other value, even when the client types a repository name or URL
+   themselves.
 3. **No silent sends.** Draft shown in full, explicit yes, then one tool call.
 4. **Track choice is explicit.** Always tell the client which track you are on;
    never drift from quick to a full interview without saying so.
