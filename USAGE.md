@@ -132,4 +132,4 @@ Stały układ, żeby czytał je zarówno człowiek, jak i automat:
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.3.1`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.4.0`.

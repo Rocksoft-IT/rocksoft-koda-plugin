@@ -348,19 +348,19 @@ multi-repository path matches the acceptance criteria.
 
 ### Phase 3: Propose a deploy order and create cross-linked issues
 #### Automated
-- [x] 3.1 `grep -qi 'deploy order' skills/rs-feature/SKILL.md`
-- [x] 3.2 `grep -q 'related_repositories' skills/rs-feature/SKILL.md`
+- [x] 3.1 `grep -qi 'deploy order' skills/rs-feature/SKILL.md` — 5f5e795
+- [x] 3.2 `grep -q 'related_repositories' skills/rs-feature/SKILL.md` — 5f5e795
 #### Manual
 - [ ] 3.3 A read-through confirms a single-repository request still issues exactly one `create_feature_issue` call after one confirmation (regression check against today's Step 6)
 - [ ] 3.4 A read-through confirms the batch failure path names created issues by link and never auto-retries
 
 ### Phase 4: Document the contract and bump the version
 #### Automated
-- [ ] 4.1 `! grep -qE '\| *.include_related.* \| *string *\| *tak' docs/flow-contract.md`
-- [ ] 4.2 `grep -q 'related_repositories' docs/flow-contract.md`
-- [ ] 4.3 `grep -qi 'include_related' docs/flow-contract.md`
-- [ ] 4.4 `python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"` succeeds
-- [ ] 4.5 `grep -q '"version": "0.4.0"' .claude-plugin/plugin.json`
-- [ ] 4.6 `grep -q '0.4.0' README.md`
-- [ ] 4.7 `grep -q '0.4.0' USAGE.md`
-- [ ] 4.8 `! grep -q '0.3.1' .claude-plugin/plugin.json`
+- [x] 4.1 `! grep -qE '\| *.include_related.* \| *string *\| *tak' docs/flow-contract.md`
+- [x] 4.2 `grep -q 'related_repositories' docs/flow-contract.md`
+- [x] 4.3 `grep -qi 'include_related' docs/flow-contract.md`
+- [x] 4.4 `python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"` succeeds
+- [x] 4.5 `grep -q '"version": "0.4.0"' .claude-plugin/plugin.json`
+- [x] 4.6 `grep -q '0.4.0' README.md`
+- [x] 4.7 `grep -q '0.4.0' USAGE.md`
+- [x] 4.8 `! grep -q '0.3.1' .claude-plugin/plugin.json`
