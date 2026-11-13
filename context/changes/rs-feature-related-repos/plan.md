@@ -333,16 +333,16 @@ multi-repository path matches the acceptance criteria.
 
 ### Phase 1: Discover and confirm related repositories
 #### Automated
-- [x] 1.1 `grep -q 'include_related' skills/rs-feature/SKILL.md`
-- [x] 1.2 `grep -q 'related_repositories' skills/rs-feature/SKILL.md`
-- [x] 1.3 `grep -qi 'which of' skills/rs-feature/SKILL.md`
+- [x] 1.1 `grep -q 'include_related' skills/rs-feature/SKILL.md` — eb2d353
+- [x] 1.2 `grep -q 'related_repositories' skills/rs-feature/SKILL.md` — eb2d353
+- [x] 1.3 `grep -qi 'which of' skills/rs-feature/SKILL.md` — eb2d353
 #### Manual
 - [ ] 1.4 A read-through of Step 2 confirms a repository with no relations (or an older server) produces exactly today's conversation, with no new question asked (AC-03)
 
 ### Phase 2: Draft cross-linked issue bodies
 #### Automated
-- [ ] 2.1 `grep -q '## Related repositories' skills/rs-feature/references/issue-template.md`
-- [ ] 2.2 `grep -q 'Related repositories' skills/rs-feature/SKILL.md`
+- [x] 2.1 `grep -q '## Related repositories' skills/rs-feature/references/issue-template.md`
+- [x] 2.2 `grep -q 'Related repositories' skills/rs-feature/SKILL.md`
 #### Manual
 - [ ] 2.3 A read-through confirms a single-repository request still produces exactly one draft with no `Related repositories` section
 

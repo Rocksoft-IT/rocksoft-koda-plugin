@@ -43,6 +43,11 @@ No solutioning.
 
 - <thing this scope will not build> — <one-line rationale>
 
+## Related repositories
+
+<!-- only when the touched repositories span more than one; omit otherwise -->
+- **<name>**: <one sentence on what changes there>
+
 ## Access & roles
 
 <!-- initiative track, or whenever the access model changes -->

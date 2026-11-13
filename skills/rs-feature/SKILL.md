@@ -235,10 +235,20 @@ activity ("Customers can export invoices as PDF", not "Invoice export work").
 Fill the `client:` metadata value with the e-mail `list_repositories` returned
 for the signed-in account (Step 1) — never a value the client typed.
 
-Print the **complete** draft in chat, then ask: "Anything to add, change, or
-remove before I send it?" Iterate until the client is satisfied. Every change
-the client asks for is applied to the draft; do not argue, but do flag once if a
-change removes something that makes the issue ambiguous for the builder.
+**When "touched repositories" (Step 2) has more than one entry**, draft a
+separate issue body per touched repository instead of one: each is scoped to
+that repository's own slice of the work, with its own Acceptance criteria,
+and carries a `## Related repositories` section listing the sibling
+repositories and one sentence on what changes in each. Print all the drafts
+together, in the proposed deploy order (Step 6), before asking anything else.
+A single touched repository drafts exactly one issue, with no `Related
+repositories` section, exactly as before this change.
+
+Print the **complete** draft (or, for several repositories, all drafts) in
+chat, then ask: "Anything to add, change, or remove before I send it?"
+Iterate until the client is satisfied. Every change the client asks for is
+applied to the draft; do not argue, but do flag once if a change removes
+something that makes the issue ambiguous for the builder.
 
 Before offering to send, run a silent completeness check and name any gap in
 one line each with its consequence (e.g. "No acceptance criterion for the error
