@@ -130,18 +130,34 @@ above. Otherwise:
 - **Exactly one repository:** say which one and confirm in one line
   ("This will go to `<name>` — right?"). Do not list alternatives that don't
   exist.
-- **Several:** show them as a numbered list — `<name>` and the description if
-  present, in the order returned — and ask the client to pick one. If the
+- **Several, and none of the returned entries carries a `role` or `client`
+  field (older server):** show them as a flat numbered list — `<name>` and
+  the description if present, in the order returned — and always ask the
+  client to pick one, exactly as before this capability existed. If the
   initial request clearly names one of them, put it first and recommend it.
+- **Several, with `role`/`client` present on at least one entry:** group them
+  by their `client` field, one heading per distinct client, clients in the
+  order returned, repositories within a client in the order returned (a
+  single client still gets its one heading). Show each repository as `name`
+  — `role` — `description`, omitting `role`/`description` when absent. Then:
+  - If the initial request clearly matches exactly one repository's `role`
+    or `description` across the whole list, pick it without asking and say
+    which one and why in one line ("I picked `<name>` because this is about
+    `<role/description reason>` — right?").
+  - Otherwise ask the client to choose from the grouped, role/description-
+    annotated list — never mentioning a repository the response did not
+    return.
 - **None:** stop with: "Rocksoft Flow has no repositories assigned to your
   account yet. Ask your Rocksoft contact to add one, then come back."
 - **Tool missing or failing:** report the error verbatim in plain language and
   offer a retry. Do not continue without a repository.
 
 Keep `name` and `git_url` exactly as returned; the `git_url` is passed verbatim
-to every later call. The response's `email` field is the signed-in client's
-address — keep it only for the issue's `client:` metadata (Step 5); never ask
-the client to confirm or restate it.
+to every later call. `role` and `client` — both optional strings, present
+only on a server that supports grouping — are kept too, for Step 2 (same-
+client siblings) and Step 5 (naming siblings by role). The response's `email`
+field is the signed-in client's address — keep it only for the issue's
+`client:` metadata (Step 5); never ask the client to confirm or restate it.
 
 ### Step 2: Load the repository context
 
@@ -167,16 +183,28 @@ yet, so I'll rely on what you tell me") and move on.
 
 If `related_repositories` came back non-empty, read each entry's own
 `files`/`missing` the same way as the primary repository's and fold one short
-line per sibling into the recap ("`<name>` also relates to this: ..."). Then
-ask the client once, in plain language, which of the named related
-repositories (if any) this request touches — never assume a "yes" from the
-mere existence of a relation: "This also relates to `<name>` — does this
+line per sibling into the recap ("`<name>` also relates to this: ..."). Build
+the list of candidates for the one question below from two sources: every
+entry in `related_repositories`, plus — only when Step 1's `list_repositories`
+response carried a `client` value for the chosen repository — any other
+repository from that same response that shares the same client (never offer
+a repository of a different client here). Then ask the client once, in
+plain language, which of the named candidates (if any, from either source)
+this request touches — never assume a "yes" from the mere existence of a
+relation or a shared client: "This also relates to `<name>` — does this
 request touch it too?" (or, with several, list them and ask which of them).
 Carry the confirmed set forward as **touched repositories**: the primary
-repository plus whichever related ones the client confirmed. When no related
-repositories were named, skip the question entirely — touched repositories is
+repository plus whichever candidates the client confirmed. When neither
+source has a candidate, skip the question entirely — touched repositories is
 just the primary one, and the rest of the conversation is exactly as before
 this change (AC-03).
+
+Once touched repositories is settled, check its size: when it has more than
+one entry, generate one **feature id** — a random UUID v4, written as the
+model's own text, no tool call (the Runtime assumptions above rule out local
+files and shell) — once for this request, and reuse that same id for every
+issue drafted and created in this conversation (Step 5, Step 6). A single
+touched repository never gets a feature id.
 
 ### Step 3: Triage and choose the track (the orchestration decision)
 
@@ -239,10 +267,15 @@ for the signed-in account (Step 1) — never a value the client typed.
 separate issue body per touched repository instead of one: each is scoped to
 that repository's own slice of the work, with its own Acceptance criteria,
 and carries a `## Related repositories` section listing the sibling
-repositories and one sentence on what changes in each. Print all the drafts
-together, in the proposed deploy order (Step 6), before asking anything else.
-A single touched repository drafts exactly one issue, with no `Related
-repositories` section, exactly as before this change.
+repositories and one sentence on what changes in each — name each sibling
+**by role first** (`**<role>** (\`<name>\`): <what changes>`), falling back
+to `**<name>**: <what changes>` when no role is known (e.g. a sibling that
+came from `related_repositories`, which carries no role field). Fill every
+draft's footer comment and `## Metadata` `**Feature:**` line with the shared
+`feature` id generated in Step 2. Print all the drafts together, in the
+proposed deploy order (Step 6), before asking anything else. A single
+touched repository drafts exactly one issue, with no `Related repositories`
+section and no `feature` field, exactly as before this change.
 
 Print the **complete** draft (or, for several repositories, all drafts) in
 chat, then ask: "Anything to add, change, or remove before I send it?"
@@ -266,7 +299,11 @@ repository's issue should land first, e.g. an API before its consumer — and
 reflect it back in one line ("I'll create these in this order: `<repo A>`,
 then `<repo B>` — does that work?"). Then ask the same "Shall I create this
 issue..." question once, covering the whole batch, not once per issue. Only
-a clear yes proceeds.
+a clear yes proceeds. A same-client split (Step 2's same-client-sibling
+source) may only combine repositories that share the primary's `client`
+value from Step 1 — this does not narrow the pre-existing allowance to
+target a `related_repositories` entry the client is not directly assigned
+to (Guardrail 2), which stays as it is.
 
 On yes, for a single repository call `create_feature_issue` once as before.
 For a batch, call `create_feature_issue` once per repository, strictly in the
@@ -286,6 +323,8 @@ Each call uses:
 - `body`: the full English markdown body
 - `track`: `quick` | `feature` | `initiative`
 - `labels`: `["rs-feature", "<track>"]`
+- `feature`: the shared `feature` id generated in Step 2 — included on every
+  call of a multi-issue batch, omitted for a single-repository request.
 
 (No `email` argument — the gateway's signed-in identity is the one the tool
 checks against the repository.)
