@@ -350,9 +350,9 @@ grouping/split/feature-id behavior matches the issue's acceptance line.
 
 ### Phase 1: Group repositories by client and pick by role
 #### Automated
-- [ ] 1.1 `grep -qi 'group' skills/rs-feature/SKILL.md`
-- [ ] 1.2 `grep -qi '`role`' skills/rs-feature/SKILL.md`
-- [ ] 1.3 `grep -qi 'without asking\|pick it without' skills/rs-feature/SKILL.md`
+- [x] 1.1 `grep -qi 'group' skills/rs-feature/SKILL.md`
+- [x] 1.2 `grep -qi '`role`' skills/rs-feature/SKILL.md`
+- [x] 1.3 `grep -qi 'without asking\|pick it without' skills/rs-feature/SKILL.md`
 #### Manual
 - [ ] 1.4 A read-through of Step 1 confirms a `list_repositories` response with no `role`/`client` fields produces exactly today's flat list and always asks, with no auto-pick (regression check)
 

@@ -130,18 +130,34 @@ above. Otherwise:
 - **Exactly one repository:** say which one and confirm in one line
   ("This will go to `<name>` — right?"). Do not list alternatives that don't
   exist.
-- **Several:** show them as a numbered list — `<name>` and the description if
-  present, in the order returned — and ask the client to pick one. If the
+- **Several, and none of the returned entries carries a `role` or `client`
+  field (older server):** show them as a flat numbered list — `<name>` and
+  the description if present, in the order returned — and always ask the
+  client to pick one, exactly as before this capability existed. If the
   initial request clearly names one of them, put it first and recommend it.
+- **Several, with `role`/`client` present on at least one entry:** group them
+  by their `client` field, one heading per distinct client, clients in the
+  order returned, repositories within a client in the order returned (a
+  single client still gets its one heading). Show each repository as `name`
+  — `role` — `description`, omitting `role`/`description` when absent. Then:
+  - If the initial request clearly matches exactly one repository's `role`
+    or `description` across the whole list, pick it without asking and say
+    which one and why in one line ("I picked `<name>` because this is about
+    `<role/description reason>` — right?").
+  - Otherwise ask the client to choose from the grouped, role/description-
+    annotated list — never mentioning a repository the response did not
+    return.
 - **None:** stop with: "Rocksoft Flow has no repositories assigned to your
   account yet. Ask your Rocksoft contact to add one, then come back."
 - **Tool missing or failing:** report the error verbatim in plain language and
   offer a retry. Do not continue without a repository.
 
 Keep `name` and `git_url` exactly as returned; the `git_url` is passed verbatim
-to every later call. The response's `email` field is the signed-in client's
-address — keep it only for the issue's `client:` metadata (Step 5); never ask
-the client to confirm or restate it.
+to every later call. `role` and `client` — both optional strings, present
+only on a server that supports grouping — are kept too, for Step 2 (same-
+client siblings) and Step 5 (naming siblings by role). The response's `email`
+field is the signed-in client's address — keep it only for the issue's
+`client:` metadata (Step 5); never ask the client to confirm or restate it.
 
 ### Step 2: Load the repository context
 
