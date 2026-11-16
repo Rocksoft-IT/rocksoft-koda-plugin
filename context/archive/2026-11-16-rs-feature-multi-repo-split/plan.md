@@ -150,7 +150,7 @@ Two decisions worth recording explicitly:
 ## Increments
 | # | Name | Phases | Depends on | User-visible | Status | PR |
 |---|---|---|---|---|---|---|
-| 1 | Multi-repository split flow | 1-4 | — | yes | in-progress | — |
+| 1 | Multi-repository split flow | 1-4 | — | yes | done | — |
 
 ## Phase 1: Group repositories by client and pick by role
 ### Overview
