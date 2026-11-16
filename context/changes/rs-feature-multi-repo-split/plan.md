@@ -376,11 +376,11 @@ grouping/split/feature-id behavior matches the issue's acceptance line.
 
 ### Phase 4: Document the contract and bump the version
 #### Automated
-- [x] 4.1 `grep -qi 'role' docs/flow-contract.md`
-- [x] 4.2 `grep -qi 'client' docs/flow-contract.md`
-- [x] 4.3 `grep -qi 'feature id\|feature.*uuid\|uuid.*feature' docs/flow-contract.md`
-- [x] 4.4 `python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"` succeeds
-- [x] 4.5 `grep -q '"version": "0.5.0"' .claude-plugin/plugin.json`
-- [x] 4.6 `grep -q '0.5.0' README.md`
-- [x] 4.7 `grep -q '0.5.0' USAGE.md`
-- [x] 4.8 `! grep -q '0.4.0' .claude-plugin/plugin.json`
+- [x] 4.1 `grep -qi 'role' docs/flow-contract.md` — 03e9467
+- [x] 4.2 `grep -qi 'client' docs/flow-contract.md` — 03e9467
+- [x] 4.3 `grep -qi 'feature id\|feature.*uuid\|uuid.*feature' docs/flow-contract.md` — 03e9467
+- [x] 4.4 `python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"` succeeds — 03e9467
+- [x] 4.5 `grep -q '"version": "0.5.0"' .claude-plugin/plugin.json` — 03e9467
+- [x] 4.6 `grep -q '0.5.0' README.md` — 03e9467
+- [x] 4.7 `grep -q '0.5.0' USAGE.md` — 03e9467
+- [x] 4.8 `! grep -q '0.4.0' .claude-plugin/plugin.json` — 03e9467
