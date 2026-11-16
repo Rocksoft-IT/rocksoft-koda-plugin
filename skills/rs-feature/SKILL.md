@@ -183,16 +183,28 @@ yet, so I'll rely on what you tell me") and move on.
 
 If `related_repositories` came back non-empty, read each entry's own
 `files`/`missing` the same way as the primary repository's and fold one short
-line per sibling into the recap ("`<name>` also relates to this: ..."). Then
-ask the client once, in plain language, which of the named related
-repositories (if any) this request touches — never assume a "yes" from the
-mere existence of a relation: "This also relates to `<name>` — does this
+line per sibling into the recap ("`<name>` also relates to this: ..."). Build
+the list of candidates for the one question below from two sources: every
+entry in `related_repositories`, plus — only when Step 1's `list_repositories`
+response carried a `client` value for the chosen repository — any other
+repository from that same response that shares the same client (never offer
+a repository of a different client here). Then ask the client once, in
+plain language, which of the named candidates (if any, from either source)
+this request touches — never assume a "yes" from the mere existence of a
+relation or a shared client: "This also relates to `<name>` — does this
 request touch it too?" (or, with several, list them and ask which of them).
 Carry the confirmed set forward as **touched repositories**: the primary
-repository plus whichever related ones the client confirmed. When no related
-repositories were named, skip the question entirely — touched repositories is
+repository plus whichever candidates the client confirmed. When neither
+source has a candidate, skip the question entirely — touched repositories is
 just the primary one, and the rest of the conversation is exactly as before
 this change (AC-03).
+
+Once touched repositories is settled, check its size: when it has more than
+one entry, generate one **feature id** — a random UUID v4, written as the
+model's own text, no tool call (the Runtime assumptions above rule out local
+files and shell) — once for this request, and reuse that same id for every
+issue drafted and created in this conversation (Step 5, Step 6). A single
+touched repository never gets a feature id.
 
 ### Step 3: Triage and choose the track (the orchestration decision)
 

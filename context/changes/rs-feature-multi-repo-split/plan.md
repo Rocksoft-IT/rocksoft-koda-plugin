@@ -350,17 +350,17 @@ grouping/split/feature-id behavior matches the issue's acceptance line.
 
 ### Phase 1: Group repositories by client and pick by role
 #### Automated
-- [x] 1.1 `grep -qi 'group' skills/rs-feature/SKILL.md`
-- [x] 1.2 `grep -qi '`role`' skills/rs-feature/SKILL.md`
-- [x] 1.3 `grep -qi 'without asking\|pick it without' skills/rs-feature/SKILL.md`
+- [x] 1.1 `grep -qi 'group' skills/rs-feature/SKILL.md` — 23fef04
+- [x] 1.2 `grep -qi '`role`' skills/rs-feature/SKILL.md` — 23fef04
+- [x] 1.3 `grep -qi 'without asking\|pick it without' skills/rs-feature/SKILL.md` — 23fef04
 #### Manual
 - [ ] 1.4 A read-through of Step 1 confirms a `list_repositories` response with no `role`/`client` fields produces exactly today's flat list and always asks, with no auto-pick (regression check)
 
 ### Phase 2: Discover a same-client split and generate the feature id
 #### Automated
-- [ ] 2.1 `grep -qi 'same client' skills/rs-feature/SKILL.md`
-- [ ] 2.2 `grep -qi 'feature id' skills/rs-feature/SKILL.md`
-- [ ] 2.3 `grep -qi 'uuid' skills/rs-feature/SKILL.md`
+- [x] 2.1 `grep -qi 'same client' skills/rs-feature/SKILL.md`
+- [x] 2.2 `grep -qi 'feature id' skills/rs-feature/SKILL.md`
+- [x] 2.3 `grep -qi 'uuid' skills/rs-feature/SKILL.md`
 #### Manual
 - [ ] 2.4 A read-through confirms a request touching exactly one repository never mentions a feature id and asks the related-repositories question exactly as before this change when there are no same-client siblings
 
