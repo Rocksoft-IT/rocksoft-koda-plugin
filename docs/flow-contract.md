@@ -43,8 +43,13 @@ kształt `{ error: "<czytelny komunikat>" }`.
 ### `list_repositories` (istnieje)
 
 Wejście: `{}` (brak argumentów). Wyjście: `{ repositories: [{ name, git_url,
-description }], email, count }` — `email` to zalogowany adres, wstrzyknięty
-przez bramkę.
+description, role, client }], email, count }` — `email` to zalogowany adres,
+wstrzyknięty przez bramkę. `role` (string) i `client` (string) są opcjonalne
+na każdym wpisie: `role` opisuje, do czego służy repozytorium (np. "backend
+API", "frontend"), `client` grupuje repozytoria tego samego klienta, gdy
+klient ma ich kilka. Brak tych pól na wpisie (starszy serwer) oznacza, że
+skill pokazuje płaską listę i zawsze pyta, dokładnie jak dotychczas — ta sama
+konwencja "brak pola jest normalny", co przy `files`/`missing` niżej.
 
 ### `get_repository_context` (istnieje)
 
@@ -82,6 +87,7 @@ Wejście:
 | `body` | string | tak | Treść w markdownie, po angielsku, wg `skills/rs-feature/references/issue-template.md`. |
 | `track` | `quick` \| `feature` \| `initiative` | tak | Głębokość rozmowy; trafia do etykiet i metadanych. |
 | `labels` | string[] | nie | Skill wysyła `["rs-feature", "<track>"]`. Workflow zawsze dokłada `rs-feature`, nawet gdy pole jest puste. |
+| `feature` | string | nie | UUID łączący kilka issue z jednego rozbicia na repozytoria (multi-issue split); obecny tylko wtedy, gdy ten `create_feature_issue` jest częścią takiej partii, pominięty dla pojedynczego issue. |
 
 `email` nie jest już polem wejściowym — tożsamość klienta pochodzi z
 zalogowanej sesji (patrz "Tożsamość klienta" powyżej).
@@ -100,7 +106,9 @@ Zachowanie workflow-u:
 3. Utwórz issue przez GitHub API z `title`, `body` i etykietami. Brakujące
    etykiety utwórz (`rs-feature`, `quick`, `feature`, `initiative`).
 4. Dopisz na końcu `body` blok metadanych, jeśli go brakuje (klient, tor, wersja
-   pluginu, data).
+   pluginu, data). Gdy wejście niosło `feature`, upewnij się, że ten UUID
+   trafia też do stopki utworzonego issue (`feature: <uuid>`), żeby Cezar
+   Pipeline mógł pogrupować wszystkie issue tego rozbicia jako jedną funkcję.
 5. Zaloguj zdarzenie (kto, jakie repo, numer issue).
 
 Wyjście:

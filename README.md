@@ -60,4 +60,4 @@ Uwierzytelnianie klienta przez bramkę MCP z logowaniem Microsoft — patrz [iss
 
 ## Wersja
 
-`0.4.0`
+`0.5.0`

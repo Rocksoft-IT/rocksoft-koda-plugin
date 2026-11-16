@@ -366,21 +366,21 @@ grouping/split/feature-id behavior matches the issue's acceptance line.
 
 ### Phase 3: Draft and create split issues under one feature id
 #### Automated
-- [x] 3.1 `grep -q 'feature:' skills/rs-feature/references/issue-template.md`
-- [x] 3.2 `grep -qi 'by role' skills/rs-feature/SKILL.md`
-- [x] 3.3 `grep -qi 'same client' skills/rs-feature/SKILL.md`
-- [x] 3.4 `grep -q 'feature' skills/rs-feature/SKILL.md`
+- [x] 3.1 `grep -q 'feature:' skills/rs-feature/references/issue-template.md` — de2e5b9
+- [x] 3.2 `grep -qi 'by role' skills/rs-feature/SKILL.md` — de2e5b9
+- [x] 3.3 `grep -qi 'same client' skills/rs-feature/SKILL.md` — de2e5b9
+- [x] 3.4 `grep -q 'feature' skills/rs-feature/SKILL.md` — de2e5b9
 #### Manual
 - [ ] 3.5 A read-through confirms a single-repository request still drafts one issue with no `feature` field and calls `create_feature_issue` once, with no `feature` argument (regression check)
 - [ ] 3.6 A read-through confirms a same-client split never mixes in a repository of a different client
 
 ### Phase 4: Document the contract and bump the version
 #### Automated
-- [ ] 4.1 `grep -qi 'role' docs/flow-contract.md`
-- [ ] 4.2 `grep -qi 'client' docs/flow-contract.md`
-- [ ] 4.3 `grep -qi 'feature id\|feature.*uuid\|uuid.*feature' docs/flow-contract.md`
-- [ ] 4.4 `python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"` succeeds
-- [ ] 4.5 `grep -q '"version": "0.5.0"' .claude-plugin/plugin.json`
-- [ ] 4.6 `grep -q '0.5.0' README.md`
-- [ ] 4.7 `grep -q '0.5.0' USAGE.md`
-- [ ] 4.8 `! grep -q '0.4.0' .claude-plugin/plugin.json`
+- [x] 4.1 `grep -qi 'role' docs/flow-contract.md`
+- [x] 4.2 `grep -qi 'client' docs/flow-contract.md`
+- [x] 4.3 `grep -qi 'feature id\|feature.*uuid\|uuid.*feature' docs/flow-contract.md`
+- [x] 4.4 `python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"` succeeds
+- [x] 4.5 `grep -q '"version": "0.5.0"' .claude-plugin/plugin.json`
+- [x] 4.6 `grep -q '0.5.0' README.md`
+- [x] 4.7 `grep -q '0.5.0' USAGE.md`
+- [x] 4.8 `! grep -q '0.4.0' .claude-plugin/plugin.json`
