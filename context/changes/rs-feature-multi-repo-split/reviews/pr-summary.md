@@ -9,11 +9,19 @@ and its matching frontend screen), the flow now agrees the split with you,
 shows both draft issues together, and — once you confirm — creates both
 issues tagged so they show up together as one feature.
 
+**Answers to your comments:**
+- Yes — this is reviewed and ready to merge. The one open item below is
+  yours to confirm or leave as is; it does not block merging either way.
+
 **Your decision is needed on:**
 - We tag every multi-issue request with the same shared feature id, not just
   requests that split across two repositories of the same client. We think
   this gives the most consistent grouping everywhere a request touches more
   than one repository; tell us if you'd rather limit that tagging to
   same-client splits only, as the original request literally described.
+
+## QA brief (for the preview check)
+- **Applies to browser QA:** no (documentation/config-only change to a Koda
+  skill's instructions; nothing renders in a browser)
 
 **Status:** Ready to merge; nothing to check by hand.
