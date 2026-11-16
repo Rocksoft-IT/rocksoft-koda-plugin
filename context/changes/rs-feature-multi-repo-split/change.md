@@ -1,10 +1,9 @@
 ---
 change_id: rs-feature-multi-repo-split
 title: Rs-feature picks the right client repository and splits multi-repo requests
-status: archived
+status: implemented
 created: 2026-11-16
 updated: 2026-11-16
-archived_at: 2026-11-16T12:01:20Z
 ---
 
 ## Notes
