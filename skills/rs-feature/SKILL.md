@@ -267,10 +267,15 @@ for the signed-in account (Step 1) — never a value the client typed.
 separate issue body per touched repository instead of one: each is scoped to
 that repository's own slice of the work, with its own Acceptance criteria,
 and carries a `## Related repositories` section listing the sibling
-repositories and one sentence on what changes in each. Print all the drafts
-together, in the proposed deploy order (Step 6), before asking anything else.
-A single touched repository drafts exactly one issue, with no `Related
-repositories` section, exactly as before this change.
+repositories and one sentence on what changes in each — name each sibling
+**by role first** (`**<role>** (\`<name>\`): <what changes>`), falling back
+to `**<name>**: <what changes>` when no role is known (e.g. a sibling that
+came from `related_repositories`, which carries no role field). Fill every
+draft's footer comment and `## Metadata` `**Feature:**` line with the shared
+`feature` id generated in Step 2. Print all the drafts together, in the
+proposed deploy order (Step 6), before asking anything else. A single
+touched repository drafts exactly one issue, with no `Related repositories`
+section and no `feature` field, exactly as before this change.
 
 Print the **complete** draft (or, for several repositories, all drafts) in
 chat, then ask: "Anything to add, change, or remove before I send it?"
@@ -294,7 +299,11 @@ repository's issue should land first, e.g. an API before its consumer — and
 reflect it back in one line ("I'll create these in this order: `<repo A>`,
 then `<repo B>` — does that work?"). Then ask the same "Shall I create this
 issue..." question once, covering the whole batch, not once per issue. Only
-a clear yes proceeds.
+a clear yes proceeds. A same-client split (Step 2's same-client-sibling
+source) may only combine repositories that share the primary's `client`
+value from Step 1 — this does not narrow the pre-existing allowance to
+target a `related_repositories` entry the client is not directly assigned
+to (Guardrail 2), which stays as it is.
 
 On yes, for a single repository call `create_feature_issue` once as before.
 For a batch, call `create_feature_issue` once per repository, strictly in the
@@ -314,6 +323,8 @@ Each call uses:
 - `body`: the full English markdown body
 - `track`: `quick` | `feature` | `initiative`
 - `labels`: `["rs-feature", "<track>"]`
+- `feature`: the shared `feature` id generated in Step 2 — included on every
+  call of a multi-issue batch, omitted for a single-repository request.
 
 (No `email` argument — the gateway's signed-in identity is the one the tool
 checks against the repository.)

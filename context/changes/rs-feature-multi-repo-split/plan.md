@@ -358,18 +358,18 @@ grouping/split/feature-id behavior matches the issue's acceptance line.
 
 ### Phase 2: Discover a same-client split and generate the feature id
 #### Automated
-- [x] 2.1 `grep -qi 'same client' skills/rs-feature/SKILL.md`
-- [x] 2.2 `grep -qi 'feature id' skills/rs-feature/SKILL.md`
-- [x] 2.3 `grep -qi 'uuid' skills/rs-feature/SKILL.md`
+- [x] 2.1 `grep -qi 'same client' skills/rs-feature/SKILL.md` — 07b6667
+- [x] 2.2 `grep -qi 'feature id' skills/rs-feature/SKILL.md` — 07b6667
+- [x] 2.3 `grep -qi 'uuid' skills/rs-feature/SKILL.md` — 07b6667
 #### Manual
 - [ ] 2.4 A read-through confirms a request touching exactly one repository never mentions a feature id and asks the related-repositories question exactly as before this change when there are no same-client siblings
 
 ### Phase 3: Draft and create split issues under one feature id
 #### Automated
-- [ ] 3.1 `grep -q 'feature:' skills/rs-feature/references/issue-template.md`
-- [ ] 3.2 `grep -qi 'by role' skills/rs-feature/SKILL.md`
-- [ ] 3.3 `grep -qi 'same client' skills/rs-feature/SKILL.md`
-- [ ] 3.4 `grep -q 'feature' skills/rs-feature/SKILL.md`
+- [x] 3.1 `grep -q 'feature:' skills/rs-feature/references/issue-template.md`
+- [x] 3.2 `grep -qi 'by role' skills/rs-feature/SKILL.md`
+- [x] 3.3 `grep -qi 'same client' skills/rs-feature/SKILL.md`
+- [x] 3.4 `grep -q 'feature' skills/rs-feature/SKILL.md`
 #### Manual
 - [ ] 3.5 A read-through confirms a single-repository request still drafts one issue with no `feature` field and calls `create_feature_issue` once, with no `feature` argument (regression check)
 - [ ] 3.6 A read-through confirms a same-client split never mixes in a repository of a different client

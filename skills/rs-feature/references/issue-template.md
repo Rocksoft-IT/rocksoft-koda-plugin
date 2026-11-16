@@ -18,7 +18,8 @@ Sentence case, ≤ 80 characters, names the outcome for the user, not the work.
 ## Body
 
 ```markdown
-<!-- rs-feature · track: <quick|feature|initiative> · client: <email> · repository: <name> -->
+<!-- rs-feature · track: <quick|feature|initiative> · client: <email> · repository: <name> · feature: <uuid> -->
+<!-- the trailing "· feature: <uuid>" segment is omitted unless this draft is part of a multi-issue split -->
 
 ## Summary
 
@@ -46,7 +47,8 @@ No solutioning.
 ## Related repositories
 
 <!-- only when the touched repositories span more than one; omit otherwise -->
-- **<name>**: <one sentence on what changes there>
+- **<role>** (`<name>`): <one sentence on what changes there>
+<!-- lead with the sibling's role when known; fall back to **<name>**: <one sentence on what changes there> when no role is known (e.g. a sibling that came from related_repositories) -->
 
 ## Access & roles
 
@@ -126,6 +128,7 @@ One to three sentences: context, decision, why.
 
 - **Client:** <email>
 - **Repository:** <name> (<git_url>)
+- **Feature:** <uuid>   <!-- only when this draft is part of a multi-issue split; omit otherwise -->
 - **Track:** quick | feature | initiative
 - **Product type:** <web app / API / … or "unchanged">   <!-- initiative -->
 - **Target scale:** <small / medium / large / enterprise or "unchanged">   <!-- initiative -->
