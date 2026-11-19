@@ -1,0 +1,23 @@
+{
+  "name": "rocksoft-koda",
+  "version": "0.6.0",
+  "description": "Rocksoft Koda for Claude and Codex — the rs-feature skill turns a client's feature or change request into a ready-to-build GitHub issue in their repository, through the Rocksoft Flow MCP server.",
+  "author": {
+    "name": "Rocksoft"
+  },
+  "keywords": ["rocksoft", "rs-feature", "feature-request", "discovery", "mcp"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Rocksoft Koda",
+    "shortDescription": "Turn requests into issues",
+    "longDescription": "Describe a feature or a change in your own words. Rocksoft Koda talks it through with you, drafts a ready-to-build GitHub issue in your repository and creates it only after your explicit yes.",
+    "developerName": "Rocksoft",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Write"],
+    "defaultPrompt": [
+      "I want to add a new feature to our project",
+      "We need to change how an existing screen works"
+    ]
+  }
+}

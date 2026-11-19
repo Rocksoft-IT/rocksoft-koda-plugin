@@ -264,12 +264,12 @@ None. Existing Claude installs update by version bump; nothing is renamed or rem
 
 ### Phase 1: Codex manifest, marketplace and version bump
 #### Automated
-- [ ] 1.1 Both manifests and the marketplace parse as JSON
-- [ ] 1.2 Versions match
-- [ ] 1.3 Claude files are otherwise untouched
-- [ ] 1.4 Codex installs it from the working tree
-- [ ] 1.5 Codex lists the skill
-- [ ] 1.6 No secrets in plugin files
+- [x] 1.1 Both manifests and the marketplace parse as JSON
+- [x] 1.2 Versions match
+- [x] 1.3 Claude files are otherwise untouched
+- [x] 1.4 Codex installs it from the working tree
+- [x] 1.5 Codex lists the skill
+- [x] 1.6 No secrets in plugin files
 #### Manual
 - [ ] 1.7 On a machine with the merged default branch, `codex plugin marketplace add Rocksoft-IT/rocksoft-koda-plugin` finds `rocksoft-koda` (remote Git snapshot path, not testable before merge)
 
