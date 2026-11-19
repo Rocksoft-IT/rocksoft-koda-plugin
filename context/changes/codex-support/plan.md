@@ -96,7 +96,7 @@ asked, English issue, repo from Flow) stays word-for-word.
 ## Increments
 | # | Name | Phases | Depends on | User-visible | Status | PR |
 |---|---|---|---|---|---|---|
-| 1 | Koda plugin installs and runs in Codex | 1-3 | — | yes | pending | — |
+| 1 | Koda plugin installs and runs in Codex | 1-3 | — | yes | in-progress | — |
 
 ## Phase 1: Codex manifest, marketplace and version bump
 ### Overview
