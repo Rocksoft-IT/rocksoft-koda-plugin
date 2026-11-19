@@ -1,11 +1,11 @@
 # rocksoft-koda — przewodnik użytkownika
 
-Plugin `rocksoft-koda` pozwala zgłosić Rocksoftowi nową funkcjonalność lub zmianę bezpośrednio z rozmowy z Claude. Efektem jest kompletne issue w Twoim repozytorium, od którego zespół Rocksoft (i jego automatyka) zaczyna pracę.
+Plugin `rocksoft-koda` pozwala zgłosić Rocksoftowi nową funkcjonalność lub zmianę bezpośrednio z rozmowy z Claude lub Codex. Efektem jest kompletne issue w Twoim repozytorium, od którego zespół Rocksoft (i jego automatyka) zaczyna pracę.
 
-Po instalacji w Claude dostępne są dwie rzeczy:
+Po instalacji w Claude lub Codex dostępne są dwie rzeczy:
 
 1. **Skill `rs-feature`** — prowadzi rozmowę i tworzy issue.
-2. **Konnektor `rocksoft-koda`** — połączenie z bramką Rocksoft (`mcp.rocksoft.pl`), które listuje Twoje repozytoria, czyta kontekst projektu i zakłada issue. Logujesz się raz, kontem służbowym Microsoft, przez `/mcp` — żadnych kluczy czy sekretów po Twojej stronie. Po aktualizacji pluginu konnektor zmienił nazwę — zaloguj się ponownie przez `/mcp`.
+2. **Konnektor `rocksoft-koda`** — połączenie z bramką Rocksoft (`mcp.rocksoft.pl`), które listuje Twoje repozytoria, czyta kontekst projektu i zakłada issue. Logujesz się raz, kontem służbowym Microsoft (w Claude Code przez `/mcp`, w Codex przez `codex mcp login rocksoft-koda`) — żadnych kluczy czy sekretów po Twojej stronie. Po aktualizacji pluginu konnektor zmienił nazwę — zaloguj się ponownie.
 
 ---
 
@@ -17,7 +17,7 @@ Plugin instaluje się **bezpośrednio z repozytorium GitHub** `Rocksoft-IT/rocks
 
 1. Otwórz Ustawienia → Plugins → Browse plugins.
 2. Dodaj marketplace z GitHuba: `Rocksoft-IT/rocksoft-koda-plugin`.
-3. Zainstaluj i włącz plugin `rocksoft-koda`, a przy konnektorze Rocksoft Flow kliknij **Connect** i zaloguj się kontem służbowym Microsoft przez `/mcp`.
+3. Zainstaluj i włącz plugin `rocksoft-koda`, a przy konnektorze Rocksoft Flow kliknij **Connect** i zaloguj się kontem służbowym Microsoft.
 
 Na planach Team i Enterprise plugin i konnektor dodaje administrator Twojej organizacji. Poproś go o instalację, jeśli nie widzisz pluginu na liście. Dostęp dla Twojej organizacji wymaga też ręcznej akceptacji przez Rocksoft — patrz niżej, sekcja "Rozwiązywanie problemów".
 
@@ -27,6 +27,33 @@ Na planach Team i Enterprise plugin i konnektor dodaje administrator Twojej orga
 claude plugin marketplace add https://github.com/Rocksoft-IT/rocksoft-koda-plugin
 claude plugin install rocksoft-koda@rocksoft-koda
 ```
+
+Po instalacji zaloguj się w sesji poleceniem `/mcp` (serwer `rocksoft-koda`).
+
+### Codex CLI
+
+```bash
+codex plugin marketplace add Rocksoft-IT/rocksoft-koda-plugin
+codex plugin add rocksoft-koda@rocksoft-koda
+codex mcp login rocksoft-koda
+```
+
+Plugin można też zainstalować poleceniem `/plugins` w Codex. Na maszynie bez przeglądarki dodaj do logowania `--no-browser`. Sprawdź stan przez `codex mcp list` i uruchom nową sesję Codex. Aktualizacja: `codex plugin marketplace upgrade rocksoft-koda`, potem ponownie `codex plugin add rocksoft-koda@rocksoft-koda` i nowa sesja. Zmiana konta: `codex mcp logout rocksoft-koda`, a następnie ponowne logowanie.
+
+### Codex — rozszerzenie IDE
+
+Rozszerzenie IDE współdzieli z CLI konfigurację MCP i skille, ale nie ma przeglądarki pluginów:
+
+```bash
+codex mcp add rocksoft-koda --url https://mcp.rocksoft.pl/koda/
+codex mcp login rocksoft-koda
+```
+
+Skopiuj folder `skills/rs-feature` z repozytorium do `~/.agents/skills/rs-feature`. Nie łącz tego z instalacją pluginu przez CLI (zdublowany serwer).
+
+### Codex cloud / ChatGPT
+
+Administrator workspace'u importuje marketplace z `https://github.com/Rocksoft-IT/rocksoft-koda-plugin` (Admin → Plugins → Import marketplace, bez ścieżki). Członkowie instalują plugin `rocksoft-koda` i klikają **Connect**. Plugin z serwerem MCP może mieć etykietę „Desktop only”.
 
 ---
 
@@ -56,7 +83,7 @@ Rozmowa toczy się **w Twoim języku**. Issue powstaje **po angielsku**, żeby z
 
 ### 1. Kto zgłasza
 
-Nic do zrobienia — Twoja tożsamość pochodzi z logowania kontem służbowym Microsoft przez `/mcp` (konnektor **Connect**). Skill nie pyta o e-mail i nigdy go nie wysyła; bramka Rocksoft dołącza zweryfikowaną tożsamość do każdego wywołania i na jej podstawie dobiera listę repozytoriów, do których masz dostęp.
+Nic do zrobienia — Twoja tożsamość pochodzi z logowania kontem służbowym Microsoft (w Claude: konnektor **Connect** lub `/mcp`; w Codex: `codex mcp login rocksoft-koda`). Skill nie pyta o e-mail i nigdy go nie wysyła; bramka Rocksoft dołącza zweryfikowaną tożsamość do każdego wywołania i na jej podstawie dobiera listę repozytoriów, do których masz dostęp.
 
 ### 2. Które repozytorium
 
@@ -120,9 +147,10 @@ Stały układ, żeby czytał je zarówno człowiek, jak i automat:
 
 | Sytuacja | Co się dzieje | Co zrobić |
 |---|---|---|
-| Konnektor Rocksoft Flow niepołączony | Skill nie widzi żadnych narzędzi — nie jesteś zalogowany | Ustawienia → Plugins → Rocksoft Flow → Connect, zaloguj się kontem służbowym Microsoft przez `/mcp`; na Team/Enterprise poproś administratora |
+| Konnektor Rocksoft Flow niepołączony (Claude) | Skill nie widzi żadnych narzędzi — nie jesteś zalogowany | Ustawienia → Plugins → Rocksoft Flow → Connect, zaloguj się kontem służbowym Microsoft przez `/mcp`; na Team/Enterprise poproś administratora |
+| Niezalogowany w Codex | Skill nie widzi narzędzi Rocksoft Koda albo wywołanie kończy się błędem autoryzacji i podaje instrukcję logowania | Uruchom `codex mcp login rocksoft-koda` (z `--no-browser` bez przeglądarki), sprawdź `codex mcp list`, uruchom nową sesję; w Codex cloud połącz Rocksoft Koda ze strony pluginu (najpierw administrator instaluje plugin) |
 | Dostęp Twojej organizacji oczekuje na akceptację (`pending`) | Skill informuje, że dostęp czeka na zatwierdzenie przez Rocksoft, i (jeśli rozmowa już trwała) drukuje szkic issue do przekazania dalej | Poczekaj na akceptację albo prześlij wydrukowany szkic opiekunowi w Rocksoft |
-| Dostęp odrzucony lub cofnięty (`not_allowed` / `revoked`) | Skill zatrzymuje się i informuje o braku dostępu | Skontaktuj się ze swoim opiekunem w Rocksoft |
+| Dostęp odrzucony lub cofnięty (`not_allowed` / `revoked`) | Skill zatrzymuje się i informuje o braku dostępu | Skontaktuj się ze swoim opiekunem w Rocksoft; jeśli zalogowałeś się innym kontem Microsoft niż organizacyjne, przełącz konto (Claude: ponowne połączenie przez `/mcp`; Codex: `codex mcp logout rocksoft-koda` i logowanie od nowa) |
 | Brak repozytoriów dla Twojego konta | Skill zatrzymuje się po kroku 1 | Poproś opiekuna w Rocksoft o przypisanie repozytorium do Twojego konta |
 | Narzędzie `create_feature_issue` niedostępne | Skill drukuje gotową treść issue | Prześlij ją opiekunowi w Rocksoft |
 | Błąd „repository not assigned” | Zalogowane konto i repozytorium nie pasują do siebie | Wróć do wyboru repozytorium albo skontaktuj się z opiekunem w Rocksoft |
@@ -132,4 +160,4 @@ Stały układ, żeby czytał je zarówno człowiek, jak i automat:
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.5.0`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.6.0`.

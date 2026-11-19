@@ -275,23 +275,23 @@ None. Existing Claude installs update by version bump; nothing is renamed or rem
 
 ### Phase 2: Agent-neutral rs-feature
 #### Automated
-- [x] 2.1 No Claude-only tool name remains
-- [x] 2.2 Codex sign-in path present
-- [x] 2.3 Claude path still present
-- [x] 2.4 Frontmatter unchanged
-- [x] 2.5 Behavioural anchors intact
-- [x] 2.6 The skill still loads in Codex
+- [x] 2.1 No Claude-only tool name remains — 6d64944
+- [x] 2.2 Codex sign-in path present — 6d64944
+- [x] 2.3 Claude path still present — 6d64944
+- [x] 2.4 Frontmatter unchanged — 6d64944
+- [x] 2.5 Behavioural anchors intact — 6d64944
+- [x] 2.6 The skill still loads in Codex — 6d64944
 #### Manual
 - [ ] 2.7 A reviewer reads the diff and confirms Steps 1-6 and the Guardrails differ only in the wording the Contract above names, and that no sentence still makes `/mcp` the only sign-in path
 - [ ] 2.8 In Codex CLI with the plugin installed and not logged in, asking for a change gets the Codex sign-in instructions and the skill stops (AC-03)
 
 ### Phase 3: README, USAGE and supporting docs
 #### Automated
-- [ ] 3.1 Version consistent everywhere
-- [ ] 3.2 Codex install steps documented
-- [ ] 3.3 Claude steps kept
-- [ ] 3.4 Structure tree lists the new files
-- [ ] 3.5 Tool contract untouched
+- [x] 3.1 Version consistent everywhere
+- [x] 3.2 Codex install steps documented
+- [x] 3.3 Claude steps kept
+- [x] 3.4 Structure tree lists the new files
+- [x] 3.5 Tool contract untouched
 #### Manual
 - [ ] 3.6 Codex cloud: a workspace admin imports the repository and a member connects Koda and runs rs-feature to an issue (AC-02); depends on mcp-gateway#26 accepting the cloud OAuth callback
 - [ ] 3.7 Codex CLI end to end with an active-tenant account: install, sign in, ask for a change, get an issue after an explicit yes (AC-01)
