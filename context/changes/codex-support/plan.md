@@ -264,23 +264,23 @@ None. Existing Claude installs update by version bump; nothing is renamed or rem
 
 ### Phase 1: Codex manifest, marketplace and version bump
 #### Automated
-- [x] 1.1 Both manifests and the marketplace parse as JSON
-- [x] 1.2 Versions match
-- [x] 1.3 Claude files are otherwise untouched
-- [x] 1.4 Codex installs it from the working tree
-- [x] 1.5 Codex lists the skill
-- [x] 1.6 No secrets in plugin files
+- [x] 1.1 Both manifests and the marketplace parse as JSON — 531dfe8
+- [x] 1.2 Versions match — 531dfe8
+- [x] 1.3 Claude files are otherwise untouched — 531dfe8
+- [x] 1.4 Codex installs it from the working tree — 531dfe8
+- [x] 1.5 Codex lists the skill — 531dfe8
+- [x] 1.6 No secrets in plugin files — 531dfe8
 #### Manual
 - [ ] 1.7 On a machine with the merged default branch, `codex plugin marketplace add Rocksoft-IT/rocksoft-koda-plugin` finds `rocksoft-koda` (remote Git snapshot path, not testable before merge)
 
 ### Phase 2: Agent-neutral rs-feature
 #### Automated
-- [ ] 2.1 No Claude-only tool name remains
-- [ ] 2.2 Codex sign-in path present
-- [ ] 2.3 Claude path still present
-- [ ] 2.4 Frontmatter unchanged
-- [ ] 2.5 Behavioural anchors intact
-- [ ] 2.6 The skill still loads in Codex
+- [x] 2.1 No Claude-only tool name remains
+- [x] 2.2 Codex sign-in path present
+- [x] 2.3 Claude path still present
+- [x] 2.4 Frontmatter unchanged
+- [x] 2.5 Behavioural anchors intact
+- [x] 2.6 The skill still loads in Codex
 #### Manual
 - [ ] 2.7 A reviewer reads the diff and confirms Steps 1-6 and the Guardrails differ only in the wording the Contract above names, and that no sentence still makes `/mcp` the only sign-in path
 - [ ] 2.8 In Codex CLI with the plugin installed and not logged in, asking for a change gets the Codex sign-in instructions and the skill stops (AC-03)
