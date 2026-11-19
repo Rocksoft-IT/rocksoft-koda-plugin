@@ -9,7 +9,7 @@ n8n niezależnie od pluginu. Plan całości: issue #1 w tym repo.
 
 Żadne z narzędzi poniżej nie przyjmuje `email` jako argumentu. Tożsamość
 klienta pochodzi z zweryfikowanego tokenu Microsoft Entra, który bramka
-dołącza do każdego wywołania po zalogowaniu przez `/mcp` — katalog
+dołącza do każdego wywołania po zalogowaniu do konnektora (`/mcp` w Claude Code, `codex mcp login rocksoft-koda` w Codex) — katalog
 repozytoriów klienta jest kluczowany dokładnie tym adresem logowania (bez
 przemapowania UPN). `list_repositories` nadal zwraca ten e-mail w swojej
 odpowiedzi, żeby skill mógł go użyć jako wartość metadanych `client:`.

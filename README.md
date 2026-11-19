@@ -1,11 +1,11 @@
 # Rocksoft Koda
 
-Plugin do Claude (Claude Desktop, claude.ai, Claude Code), który zamienia prośbę klienta o nową funkcjonalność lub zmianę w gotowe do realizacji issue w jego repozytorium. Jeden skill (`rs-feature`) plus bramka MCP Rocksoft (`mcp.rocksoft.pl`).
+Plugin do Claude (Claude Desktop, claude.ai, Claude Code) i OpenAI Codex (CLI, rozszerzenie IDE, Codex cloud), który zamienia prośbę klienta o nową funkcjonalność lub zmianę w gotowe do realizacji issue w jego repozytorium. Jeden skill (`rs-feature`) plus bramka MCP Rocksoft (`mcp.rocksoft.pl`).
 
 ## Co zawiera
 
 - **Skill `rs-feature`** — jedyny punkt wejścia. Po zalogowaniu wybiera repozytorium, czyta kontekst projektu, dobiera głębokość rozmowy (quick / feature / initiative), prowadzi brainstorming i planowanie, a na końcu — po jawnym potwierdzeniu — tworzy issue przez Rocksoft Flow. Rozmowa w języku klienta, issue po angielsku.
-- **MCP `rocksoft-koda`** — połączenie HTTPS z `https://mcp.rocksoft.pl/koda/`, uwierzytelnione logowaniem Microsoft (konto służbowe) przez `/mcp`. Skill używa trzech narzędzi: `list_repositories`, `get_repository_context`, `create_feature_issue` — żadne nie przyjmuje e-maila, tożsamość klienta wstrzykuje bramka. Kontrakt: [docs/flow-contract.md](docs/flow-contract.md). Po aktualizacji pluginu konnektor zmienił nazwę — zaloguj się ponownie przez `/mcp`.
+- **MCP `rocksoft-koda`** — połączenie HTTPS z `https://mcp.rocksoft.pl/koda/`, uwierzytelnione logowaniem Microsoft (konto służbowe) — w Claude Code przez `/mcp`, w Codex przez `codex mcp login rocksoft-koda`. Skill używa trzech narzędzi: `list_repositories`, `get_repository_context`, `create_feature_issue` — żadne nie przyjmuje e-maila, tożsamość klienta wstrzykuje bramka. Kontrakt: [docs/flow-contract.md](docs/flow-contract.md). Po aktualizacji pluginu konnektor zmienił nazwę — zaloguj się ponownie (w Claude Code przez `/mcp`, w Codex przez `codex mcp login rocksoft-koda`).
 
 Plugin nie czyta ani nie zapisuje plików na komputerze klienta i nie potrzebuje gita. Cały dostęp do repozytoriów odbywa się po stronie Rocksoft Flow.
 
@@ -26,6 +26,42 @@ claude plugin marketplace add https://github.com/Rocksoft-IT/rocksoft-koda-plugi
 claude plugin install rocksoft-koda@rocksoft-koda
 ```
 
+### Codex CLI
+
+```bash
+codex plugin marketplace add Rocksoft-IT/rocksoft-koda-plugin
+codex plugin add rocksoft-koda@rocksoft-koda
+codex mcp login rocksoft-koda
+```
+
+Plugin można też zainstalować z poziomu Codex poleceniem `/plugins`. Na maszynie bez przeglądarki użyj `codex mcp login rocksoft-koda --no-browser`. Stan logowania sprawdzisz przez `codex mcp list`; po zalogowaniu uruchom nową sesję Codex.
+
+Aktualizacja do nowej wersji:
+
+```bash
+codex plugin marketplace upgrade rocksoft-koda
+codex plugin add rocksoft-koda@rocksoft-koda
+```
+
+i nowa sesja Codex.
+
+### Codex — rozszerzenie IDE
+
+Rozszerzenie IDE nie ma przeglądarki pluginów, ale współdzieli z CLI konfigurację MCP i skille. Skonfiguruj serwer i zaloguj się:
+
+```bash
+codex mcp add rocksoft-koda --url https://mcp.rocksoft.pl/koda/
+codex mcp login rocksoft-koda
+```
+
+Następnie skopiuj folder `skills/rs-feature` z tego repozytorium do `~/.agents/skills/rs-feature`. Nie łącz tego z instalacją pluginu przez CLI — serwer `rocksoft-koda` zostałby zdublowany.
+
+### Codex cloud / ChatGPT
+
+Administrator workspace'u importuje marketplace z `https://github.com/Rocksoft-IT/rocksoft-koda-plugin` (Admin → Plugins → Import marketplace, bez podawania ścieżki). Członkowie workspace'u instalują plugin `rocksoft-koda` i klikają **Connect**. Plugin z serwerem MCP może być oznaczony jako „Desktop only”.
+
+Dostęp do repozytoriów i organizacji egzekwuje bramka Rocksoft, nie plugin — instalacja w Codex niczego nie odblokowuje bez aktywnego dostępu organizacji.
+
 ## Użycie
 
 W czacie wystarczy opisać, czego potrzebujesz:
@@ -34,16 +70,21 @@ W czacie wystarczy opisać, czego potrzebujesz:
 Chcę, żeby klienci mogli pobierać faktury jako PDF z panelu.
 ```
 
-Claude uruchomi `rs-feature`, potwierdzi repozytorium (na podstawie Twojego logowania przez `/mcp`), dobierze tor rozmowy, zada pytania po kolei, pokaże pełny szkic issue i zapyta, czy je utworzyć. Szczegóły w [USAGE.md](USAGE.md).
+Claude lub Codex uruchomi `rs-feature`, potwierdzi repozytorium (na podstawie Twojego logowania do konnektora), dobierze tor rozmowy, zada pytania po kolei, pokaże pełny szkic issue i zapyta, czy je utworzyć. Szczegóły w [USAGE.md](USAGE.md).
 
 ## Struktura
 
 ```
 .
 ├── .claude-plugin/
-│   ├── plugin.json            # manifest pluginu
-│   └── marketplace.json       # definicja marketplace
-├── .mcp.json                  # serwer MCP rocksoft-koda
+│   ├── plugin.json            # manifest pluginu (Claude)
+│   └── marketplace.json       # definicja marketplace (Claude)
+├── .codex-plugin/
+│   └── plugin.json            # manifest pluginu (Codex)
+├── .agents/
+│   └── plugins/
+│       └── marketplace.json   # definicja marketplace (Codex)
+├── .mcp.json                  # serwer MCP rocksoft-koda (wspólny dla Claude i Codex)
 ├── docs/
 │   └── flow-contract.md       # kontrakt narzędzi MCP (dla n8n)
 ├── skills/
@@ -60,4 +101,4 @@ Uwierzytelnianie klienta przez bramkę MCP z logowaniem Microsoft — patrz [iss
 
 ## Wersja
 
-`0.5.0`
+`0.6.0`

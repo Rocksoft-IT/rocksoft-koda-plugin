@@ -29,23 +29,26 @@ reader (human or agent) who never saw this chat has to be able to build from it.
 
 ## Runtime assumptions
 
-This skill runs in **Claude Desktop / claude.ai chat** first, Claude Code second.
-Design every step for the weaker environment:
+This skill runs in whatever chat host the client uses: **Claude Desktop /
+claude.ai chat**, **Claude Code**, **Codex CLI**, the **Codex IDE extension** or
+**Codex cloud / ChatGPT**. Design every step for the weakest of them, even where
+a host offers more:
 
 - **No local files, no shell, no git.** Do not read or write files on the
   client's machine and never assume a working directory. All project knowledge
   comes from the Rocksoft Flow MCP tools; the only output is the issue.
-- **Questions are plain chat.** If an interactive question tool (e.g.
-  AskUserQuestion) is available, use it. Otherwise ask in chat with numbered
-  options, the recommended option first and marked "(recommended)", and a last
-  option "Not sure / let's come back to this".
+- **Questions are plain chat.** Ask in chat with numbered options, the
+  recommended option first and marked "(recommended)", and a last option
+  "Not sure / let's come back to this". If the host happens to offer a
+  structured question tool, you may use it for the same options; never depend
+  on one and never name a host-specific tool to the client.
 - **Tools are the MCP tools only:** `list_repositories`,
   `get_repository_context`, `create_feature_issue`. Read a tool's schema before
   the first call and pass arguments exactly as it expects.
 - **Identity comes from the gateway, not the chat.** The client signs in once
-  to Rocksoft Koda with their Microsoft work account via `/mcp`; every tool
-  call carries that verified identity automatically. Never ask for or send an
-  e-mail.
+  to Rocksoft Koda with their Microsoft work account (see "Signing in, per
+  host" below); every tool call carries that verified identity automatically.
+  Never ask for or send an e-mail.
 
 ## Handling tenant-access outcomes
 
@@ -61,10 +64,34 @@ normal result. Check for this before interpreting the rest of the response:
   Stop; do not retry automatically.
 - **`{ error: "not_allowed" }` or `{ error: "revoked" }`:** tell the client
   their organization does not currently have access and to contact their
-  Rocksoft contact. Stop.
-- **No tools exposed at all (not signed in):** tell the client to authorize
-  Rocksoft Koda via `/mcp` with their Microsoft work account, then try again
-  (AC-03). Stop.
+  Rocksoft contact. If they may have signed in with a different Microsoft
+  account than their organization's, add that they can switch account (see
+  "Signing in, per host") and try again. Stop.
+- **No Rocksoft Koda tools exposed at all, or a tool call fails with a sign-in /
+  unauthorized error (not signed in):** give the client the sign-in lines for
+  their host from "Signing in, per host" below (Microsoft work account), then
+  tell them to try again (AC-03). Stop.
+
+## Signing in, per host
+
+The client signs in once to Rocksoft Koda with their Microsoft work account.
+Pick the lines for the host you are running in, judging from the context you
+can see; when the host is unknown, show both the Claude and the Codex lines.
+
+- **Claude Desktop / claude.ai:** open the Rocksoft Koda connector and press
+  Connect, then sign in with the Microsoft work account. On Team / Enterprise
+  plans an organization admin installs the plugin first.
+- **Claude Code:** run `/mcp`, choose `rocksoft-koda` and authenticate.
+- **Codex CLI and Codex IDE extension:** run `codex mcp login rocksoft-koda` in
+  a terminal (add `--no-browser` on a machine without a browser), sign in with
+  the Microsoft work account, check with `codex mcp list` that `rocksoft-koda`
+  is logged in, then start a new Codex session.
+- **Codex cloud / ChatGPT:** connect Rocksoft Koda from its plugin page; a
+  workspace admin installs the plugin first.
+
+To switch to a different account: in Claude, reconnect through the same
+connector or `/mcp`; in Codex, run `codex mcp logout rocksoft-koda`, then log in
+again as above.
 
 ## Core principles
 
@@ -113,12 +140,13 @@ normal result. Check for this before interpreting the rest of the response:
 ### Step 0: Check sign-in
 
 No question, no confirmation, no e-mail. The client's identity is whatever
-Microsoft work account they signed in with via `/mcp`; the gateway attaches it
-to every tool call from here on.
+Microsoft work account they signed in with (see "Signing in, per host"); the
+gateway attaches it to every tool call from here on.
 
 Before Step 1's first tool call, check whether the connector exposes any
 tools at all. If it exposes none, the client is not signed in: follow "No
-tools exposed at all" under "Handling tenant-access outcomes" above and stop.
+Rocksoft Koda tools exposed at all" under "Handling tenant-access outcomes"
+above and stop.
 Otherwise go straight to Step 1 — nothing to ask here.
 
 ### Step 1: Pick the repository
@@ -149,8 +177,11 @@ above. Otherwise:
     return.
 - **None:** stop with: "Rocksoft Flow has no repositories assigned to your
   account yet. Ask your Rocksoft contact to add one, then come back."
-- **Tool missing or failing:** report the error verbatim in plain language and
-  offer a retry. Do not continue without a repository.
+- **Tool missing or failing:** if the tool is missing or the error is a
+  sign-in / unauthorized one, follow "No Rocksoft Koda tools exposed at all"
+  under "Handling tenant-access outcomes" above and stop. Otherwise report the
+  error verbatim in plain language and offer a retry. Do not continue without a
+  repository.
 
 Keep `name` and `git_url` exactly as returned; the `git_url` is passed verbatim
 to every later call. `role` and `client` — both optional strings, present
@@ -337,6 +368,10 @@ Otherwise, on success print the link, number, and repository:
 
 Handle other failures plainly:
 
+- **Not signed in (no Rocksoft Koda tools at all, or a sign-in / unauthorized error):** follow
+  "No Rocksoft Koda tools exposed at all" under "Handling tenant-access
+  outcomes" above, and print the final title and body once more in a single code
+  block so nothing is lost. Stop.
 - **Tool not exposed / not found:** say "Rocksoft Flow doesn't expose
   `create_feature_issue` in this session yet, so I can't create the issue
   myself." Then print the final title and body once more in a single code
