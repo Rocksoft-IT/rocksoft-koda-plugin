@@ -1,7 +1,7 @@
 ---
 change_id: codex-support
 title: Koda plugin works in OpenAI Codex as well as Claude
-status: implemented
+status: impl_reviewed
 created: 2026-11-19
 updated: 2026-11-19
 archived_at: null
