@@ -287,11 +287,11 @@ None. Existing Claude installs update by version bump; nothing is renamed or rem
 
 ### Phase 3: README, USAGE and supporting docs
 #### Automated
-- [x] 3.1 Version consistent everywhere
-- [x] 3.2 Codex install steps documented
-- [x] 3.3 Claude steps kept
-- [x] 3.4 Structure tree lists the new files
-- [x] 3.5 Tool contract untouched
+- [x] 3.1 Version consistent everywhere — 54cf8af
+- [x] 3.2 Codex install steps documented — 54cf8af
+- [x] 3.3 Claude steps kept — 54cf8af
+- [x] 3.4 Structure tree lists the new files — 54cf8af
+- [x] 3.5 Tool contract untouched — 54cf8af
 #### Manual
 - [ ] 3.6 Codex cloud: a workspace admin imports the repository and a member connects Koda and runs rs-feature to an issue (AC-02); depends on mcp-gateway#26 accepting the cloud OAuth callback
 - [ ] 3.7 Codex CLI end to end with an active-tenant account: install, sign in, ask for a change, get an issue after an explicit yes (AC-01)
