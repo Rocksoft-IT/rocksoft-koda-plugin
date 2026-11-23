@@ -1,9 +1,18 @@
 {
   "name": "rocksoft-koda",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Rocksoft Koda for Claude and Codex — the rs-feature skill turns a client's feature or change request into a ready-to-build GitHub issue in their repository, through the Rocksoft Flow MCP server.",
   "author": {
     "name": "Rocksoft"
   },
-  "keywords": ["rocksoft", "rs-feature", "feature-request", "discovery", "mcp"]
+  "keywords": [
+    "rocksoft",
+    "rs-feature",
+    "feature-request",
+    "discovery",
+    "mcp"
+  ],
+  "dependencies": [
+    "rs-skills"
+  ]
 }

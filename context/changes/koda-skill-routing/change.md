@@ -1,7 +1,7 @@
 ---
 change_id: koda-skill-routing
 title: Koda routes work to the right Rocksoft skill and flags overlaps
-status: planned
+status: implementing
 created: 2026-11-23
 updated: 2026-11-23
 archived_at: null
