@@ -137,7 +137,7 @@ request to Koda in chat, or write to koda@rocksoft.pl.
 | # | Name | Phases | Depends on | User-visible | Status | PR |
 |---|---|---|---|---|---|---|
 | 1 | Distribution: rs-skills installs with Koda | 1-2 | — | yes | done | — |
-| 2 | Hooks, routing and docs | 3-6 | 1 | yes | pending | — |
+| 2 | Hooks, routing and docs | 3-6 | 1 | yes | in-progress | — |
 
 ## Critical Implementation Details
 - **Fail open, three layers.** Shell `|| true`; in-script `try/except` plus
