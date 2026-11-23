@@ -1,12 +1,12 @@
 <!-- preview-link -->
 
-**What this delivers:** Teams that add the Koda marketplace to their repository now get the Rocksoft workflow tools (plan, build, review, archive) installed together with Koda in Claude Code and Codex, plus a setup guide that shows the one-time team configuration for both. This is the first part of two; the automatic routing of requests comes in the next part, which builds on this one and is released after it.
+**What this delivers:** When a developer works in Claude Code or Codex in a repository that has Koda, Koda now points the assistant to the right Rocksoft path on its own. A new session opens with a short map and the next step for any open change. A request like "add..." or "fix..." (also in Norwegian and Polish) starts the right path, while a question like "how does X work?" starts nothing. The first time, Koda asks once whether changes are built locally in the developer's session or by Koda from an issue, and the team shares that answer. It also tells the team once when their own commands overlap with Rocksoft's tools, asks once which to use, and remembers it. A ready-made section for the team's instruction file and an updated README explain this, and that nothing is sent anywhere and no code is changed. This builds on the previous part and is released after it.
 
 **Your decision is needed on:**
-- The workflow tools are pinned to release 3.2.0 of the Rocksoft distribution repository, which is not published yet. Please merge this part only once that release exists; until then installing the updated Koda would fail to find the workflow tools. Tell us if a different release should be pinned.
-- Automatic updates for Claude Code can be switched on in the team settings, but Claude documents this only for centrally managed setups, so developers may need to enable it once themselves. The guide says so.
+- The Rocksoft workflow tools are pinned to release 3.2.0 of the distribution repository, which is not published yet, and the whole new Koda version depends on it. Please merge both parts only after that release exists, or tell us which release to pin.
+- We could not confirm that Codex runs plugin hooks in its command-line version (its documentation mentions only the desktop app). If it does not, routing there works only in the desktop app. Tell us if that is acceptable.
 
 ## QA brief (for the preview check)
-- **Applies to browser QA:** no (documentation and plugin configuration only, nothing renders in a browser)
+- **Applies to browser QA:** no (hooks and documentation for Claude Code and Codex; nothing renders in a browser)
 
-**Status:** Ready to merge once the Rocksoft distribution release 3.2.0 is published and a developer has followed the new setup guide on a fresh clone.
+**Status:** Ready to merge once release 3.2.0 is published and a developer has tried a new session, an "add..." request and a question in Claude Code (and Codex) with the plugin installed.
