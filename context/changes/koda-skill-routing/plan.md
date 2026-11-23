@@ -453,19 +453,19 @@ hook `timeout` is 5 s.
 
 ### Phase 1: Marketplaces, dependency and version
 #### Automated
-- [x] 1.1 All four manifest and marketplace JSON files parse
-- [x] 1.2 Claude and Codex plugin manifests carry the same version 0.7.0, also stated in README.md and USAGE.md
-- [x] 1.3 Claude marketplace lists rocksoft-koda and rs-skills, rs-skills as git-subdir with a rs-skills--v<X.Y.Z> ref, and plugin.json depends on rs-skills
-- [x] 1.4 Codex marketplace lists rocksoft-koda and rs-skills with the same url, git-subdir source and ref as the Claude marketplace
-- [x] 1.5 Chat behaviour is preserved: git diff --quiet main...HEAD -- skills .mcp.json docs/flow-contract.md
+- [x] 1.1 All four manifest and marketplace JSON files parse — efec016
+- [x] 1.2 Claude and Codex plugin manifests carry the same version 0.7.0, also stated in README.md and USAGE.md — efec016
+- [x] 1.3 Claude marketplace lists rocksoft-koda and rs-skills, rs-skills as git-subdir with a rs-skills--v<X.Y.Z> ref, and plugin.json depends on rs-skills — efec016
+- [x] 1.4 Codex marketplace lists rocksoft-koda and rs-skills with the same url, git-subdir source and ref as the Claude marketplace — efec016
+- [x] 1.5 Chat behaviour is preserved: git diff --quiet main...HEAD -- skills .mcp.json docs/flow-contract.md — efec016
 #### Manual
 - [ ] 1.6 Once rs-skills#73 has published the distribution tag: add the marketplace in Claude Code, install rocksoft-koda, and see rs-* skills and agents available (AC-01)
 - [ ] 1.7 Once published: add the marketplace in Codex, enable both plugins, and see rs-* skills available (AC-01)
 
 ### Phase 2: Client setup guide
 #### Automated
-- [ ] 2.1 docs/client-setup.md exists and contains extraKnownMarketplaces, autoUpdate, enabledPlugins, both Codex plugin tables, the marketplace upgrade command and /hooks
-- [ ] 2.2 README.md links to docs/client-setup.md
+- [x] 2.1 docs/client-setup.md exists and contains extraKnownMarketplaces, autoUpdate, enabledPlugins, both Codex plugin tables, the marketplace upgrade command and /hooks
+- [x] 2.2 README.md links to docs/client-setup.md
 #### Manual
 - [ ] 2.3 A Fide developer can follow the guide on a fresh clone without naming any skill (read-through on the PR)
 

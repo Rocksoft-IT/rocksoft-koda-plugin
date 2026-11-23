@@ -13,6 +13,8 @@ Plugin nie czyta ani nie zapisuje plików na komputerze klienta i nie potrzebuje
 
 Plugin jest dystrybuowany **wyłącznie przez to repozytorium GitHub**, które pełni rolę marketplace'u. Nie ma paczek zip do pobierania ani wgrywania; każda instalacja i aktualizacja pochodzi bezpośrednio z repozytorium.
 
+Konfigurację zespołu w repozytorium klienta (Claude Code i Codex, razem z rs-skills) opisuje [docs/client-setup.md](docs/client-setup.md).
+
 ### Claude Desktop / claude.ai
 
 1. Ustawienia → Plugins → Browse plugins → dodaj marketplace z repozytorium GitHub `Rocksoft-IT/rocksoft-koda-plugin`.
@@ -86,6 +88,7 @@ Claude lub Codex uruchomi `rs-feature`, potwierdzi repozytorium (na podstawie Tw
 │       └── marketplace.json   # definicja marketplace (Codex)
 ├── .mcp.json                  # serwer MCP rocksoft-koda (wspólny dla Claude i Codex)
 ├── docs/
+│   ├── client-setup.md        # konfiguracja zespołu: Koda + rs-skills
 │   └── flow-contract.md       # kontrakt narzędzi MCP (dla n8n)
 ├── skills/
 │   └── rs-feature/
