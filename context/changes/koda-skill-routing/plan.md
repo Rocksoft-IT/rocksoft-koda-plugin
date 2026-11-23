@@ -491,9 +491,9 @@ hook `timeout` is 5 s.
 
 ### Phase 5: Prompt hook, mode question and ambiguity
 #### Automated
-- [ ] 5.1 PromptTests pass: python3 -m unittest discover -s hooks/tests -k PromptTests
-- [ ] 5.2 The full suite passes: python3 -m unittest discover -s hooks/tests
-- [ ] 5.3 git status --porcelain is empty after the full test run
+- [x] 5.1 PromptTests pass: python3 -m unittest discover -s hooks/tests -k PromptTests — c40dc70
+- [x] 5.2 The full suite passes: python3 -m unittest discover -s hooks/tests — c40dc70
+- [x] 5.3 git status --porcelain is empty after the full test run — c40dc70
 #### Manual
 - [ ] 5.4 In Claude Code, typing "add X" in a repo without .rocksoft/koda.json leads the model to ask local vs server once and write the file (AC-02)
 - [ ] 5.5 With mode server, "fix the invoice total rounding" starts rs-feature without naming it, and "how does invoice rounding work?" starts nothing (AC-03, AC-04)
@@ -501,9 +501,9 @@ hook `timeout` is 5 s.
 
 ### Phase 6: AGENTS.md template, README, USAGE and tech stack
 #### Automated
-- [ ] 6.1 docs/agents-md-section.md exists and contains koda@rocksoft.pl, AGENTS.md, CLAUDE.md, /hooks, .rocksoft/koda.json and client-setup.md
-- [ ] 6.2 README.md no longer says the plugin never reads local files and mentions .rocksoft/koda.json and hooks/
-- [ ] 6.3 context/foundation/tech-stack.md names Python 3 and the unittest command
-- [ ] 6.4 Chat behaviour is preserved: git diff --quiet main...HEAD -- skills .mcp.json docs/flow-contract.md
+- [x] 6.1 docs/agents-md-section.md exists and contains koda@rocksoft.pl, AGENTS.md, CLAUDE.md, /hooks, .rocksoft/koda.json and client-setup.md
+- [x] 6.2 README.md no longer says the plugin never reads local files and mentions .rocksoft/koda.json and hooks/
+- [x] 6.3 context/foundation/tech-stack.md names Python 3 and the unittest command
+- [x] 6.4 Chat behaviour is preserved: git diff --quiet main...HEAD -- skills .mcp.json docs/flow-contract.md
 #### Manual
 - [ ] 6.5 A client reader understands from README and the template which prompts are routed, what is read locally, that nothing is sent, and whom to contact

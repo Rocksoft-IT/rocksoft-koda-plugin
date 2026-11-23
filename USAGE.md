@@ -134,12 +134,25 @@ Stały układ, żeby czytał je zarówno człowiek, jak i automat:
 
 ---
 
+## Routing w Claude Code i Codex
+
+W Claude Code i Codex plugin pomaga wybrać właściwą ścieżkę, zanim nazwiesz jakikolwiek skill. Hooki czytają tylko lokalny stan repozytorium, niczego nie wysyłają i nigdy nie blokują sesji ani wiadomości (w Codex trzeba je jednorazowo zaufać w `/hooks`).
+
+- **Początek sesji:** krótka mapa „co dokąd trafia” i następny krok dla otwartej zmiany.
+- **Prośba o zmianę** („dodaj…”, „popraw…”, „add…”, „fix…”, „legg til…”): plugin podpowiada modelowi tor. Pytania („jak działa…?”) nie uruchamiają żadnej ścieżki.
+- **Tryb dostarczania:** przy pierwszej prośbie o zmianę zostaniesz zapytany raz, czy zmiany budujesz lokalnie w sesji (`local`, rs-orchestrator), czy po stronie Kody z issue (`server`, rs-feature). Odpowiedź zapisuje `.rocksoft/koda.json` — plik wspólny dla zespołu, zmieniany przez zwykły PR.
+- **Koda doctor:** gdy repozytorium ma własne komendy lub skille pokrywające się z rs-* (np. `/preflight` i `rs-impl_review`), zobaczysz jedno powiadomienie po zmianie zestawu, a przy niejednoznacznej prośbie jedno pytanie, którego użyć. Wybór jest zapamiętany (zespołowy w `.rocksoft/koda.json`, osobisty poza repozytorium).
+
+Szablon sekcji `AGENTS.md` dla zespołu: [docs/agents-md-section.md](docs/agents-md-section.md). Konfiguracja projektu: [docs/client-setup.md](docs/client-setup.md).
+
+---
+
 ## Zasady, na które możesz liczyć
 
 - **Nic nie jest wysyłane bez Twojej zgody.** Najpierw pełny szkic, potem pytanie, potem jedno wywołanie.
 - **Skill niczego nie wymyśla.** Brakujące informacje dopytuje albo zostawia w Open questions.
 - **Bez technologii.** Skill nie pyta o framework, bazę czy hosting. Jeśli sam masz zdanie, trafi ono do osobnej sekcji notatek technicznych.
-- **Bez plików i gita po Twojej stronie.** Wszystko dzieje się w rozmowie i po stronie Rocksoft Flow.
+- **W czacie bez plików i gita po Twojej stronie.** Wszystko dzieje się w rozmowie i po stronie Rocksoft Flow. W Claude Code i Codex hooki czytają lokalny stan repozytorium (nic nie wysyłają, nie zmieniają kodu) — patrz „Routing w Claude Code i Codex”.
 
 ---
 

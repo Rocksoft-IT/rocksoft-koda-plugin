@@ -7,7 +7,18 @@ Plugin do Claude (Claude Desktop, claude.ai, Claude Code) i OpenAI Codex (CLI, r
 - **Skill `rs-feature`** — jedyny punkt wejścia. Po zalogowaniu wybiera repozytorium, czyta kontekst projektu, dobiera głębokość rozmowy (quick / feature / initiative), prowadzi brainstorming i planowanie, a na końcu — po jawnym potwierdzeniu — tworzy issue przez Rocksoft Flow. Rozmowa w języku klienta, issue po angielsku.
 - **MCP `rocksoft-koda`** — połączenie HTTPS z `https://mcp.rocksoft.pl/koda/`, uwierzytelnione logowaniem Microsoft (konto służbowe) — w Claude Code przez `/mcp`, w Codex przez `codex mcp login rocksoft-koda`. Skill używa trzech narzędzi: `list_repositories`, `get_repository_context`, `create_feature_issue` — żadne nie przyjmuje e-maila, tożsamość klienta wstrzykuje bramka. Kontrakt: [docs/flow-contract.md](docs/flow-contract.md). Po aktualizacji pluginu konnektor zmienił nazwę — zaloguj się ponownie (w Claude Code przez `/mcp`, w Codex przez `codex mcp login rocksoft-koda`).
 
-Plugin nie czyta ani nie zapisuje plików na komputerze klienta i nie potrzebuje gita. Cały dostęp do repozytoriów odbywa się po stronie Rocksoft Flow.
+W czacie (Claude Desktop, claude.ai, Codex cloud) plugin działa wyłącznie przez Rocksoft Flow: nie czyta ani nie zapisuje niczego na komputerze klienta i nie potrzebuje gita. Cały dostęp do repozytoriów odbywa się po stronie Rocksoft Flow.
+
+W Claude Code i Codex plugin ma dodatkowo hooki (`hooks/`), które czytają lokalny stan repozytorium (gałąź, otwarte zmiany w `context/changes/`, `.rocksoft/koda.json`, zainstalowane skille, komendy i agenty), żeby wybrać właściwy skill Rocksoft. Hooki niczego nie wysyłają, nie używają sieci i nie zmieniają kodu; błąd lub przekroczenie czasu nigdy nie blokuje sesji ani wiadomości. Jedyne zapisy to `.rocksoft/koda.json` (po Twojej odpowiedzi na pytanie o tryb lub o wybór skilla) oraz pliki podręczne poza repozytorium. W Codex hooki trzeba jednorazowo zaufać w `/hooks`.
+
+Co robią hooki:
+
+- **Start sesji** — krótka mapa, dokąd trafia dany rodzaj prośby, i następny krok dla otwartej zmiany.
+- **Wiadomość wygląda na pracę** („dodaj”, „popraw”, „add”, „fix”, „legg til”…) — podpowiedź, który tor uruchomić. Pytania („jak działa…?”) nie uruchamiają niczego.
+- **Tryb dostarczania** — przy pierwszej prośbie o zmianę zapytanie raz: `local` (rs-orchestrator w Twojej sesji) albo `server` (Koda buduje z issue). Odpowiedź trafia do `.rocksoft/koda.json`, wspólnego dla zespołu.
+- **Koda doctor** — raz po zmianie zestawu zainstalowanych skilli informuje, gdy repozytorium ma własne komendy pokrywające się z rs-* (np. `/preflight` i `rs-impl_review`), i pyta raz, którego użyć.
+
+Gotową sekcję do `AGENTS.md` (z podpowiedzią do `CLAUDE.md`) znajdziesz w [docs/agents-md-section.md](docs/agents-md-section.md). Pytania i pomoc: napisz do Koda na czacie albo na koda@rocksoft.pl.
 
 ## Instalacja
 
@@ -88,8 +99,13 @@ Claude lub Codex uruchomi `rs-feature`, potwierdzi repozytorium (na podstawie Tw
 │       └── marketplace.json   # definicja marketplace (Codex)
 ├── .mcp.json                  # serwer MCP rocksoft-koda (wspólny dla Claude i Codex)
 ├── docs/
+│   ├── agents-md-section.md   # szablon sekcji AGENTS.md (+ wskazówka do CLAUDE.md)
 │   ├── client-setup.md        # konfiguracja zespołu: Koda + rs-skills
 │   └── flow-contract.md       # kontrakt narzędzi MCP (dla n8n)
+├── hooks/
+│   ├── hooks.json             # hooki SessionStart i UserPromptSubmit (Claude Code, Codex)
+│   ├── scripts/koda_hook.py   # mapa routingu, podpowiedź, Koda doctor, zapis wyborów
+│   └── tests/                 # testy: python3 -m unittest discover -s hooks/tests
 ├── skills/
 │   └── rs-feature/
 │       ├── SKILL.md
