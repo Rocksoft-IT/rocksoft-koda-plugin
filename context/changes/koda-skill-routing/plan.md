@@ -471,12 +471,12 @@ hook `timeout` is 5 s.
 
 ### Phase 3: Hook runtime and session start
 #### Automated
-- [ ] 3.1 hooks/hooks.json parses, declares SessionStart and UserPromptSubmit, every timeout is 10 s or less
-- [ ] 3.2 SessionStartTests pass: python3 -m unittest discover -s hooks/tests -k SessionStartTests
-- [ ] 3.3 FailOpenTests pass: python3 -m unittest discover -s hooks/tests -k FailOpenTests
-- [ ] 3.4 UpgradeReminderTests pass: python3 -m unittest discover -s hooks/tests -k UpgradeReminderTests
-- [ ] 3.5 ReadOnlyTests pass: python3 -m unittest discover -s hooks/tests -k ReadOnlyTests
-- [ ] 3.6 Script imports no networking module
+- [x] 3.1 hooks/hooks.json parses, declares SessionStart and UserPromptSubmit, every timeout is 10 s or less
+- [x] 3.2 SessionStartTests pass: python3 -m unittest discover -s hooks/tests -k SessionStartTests
+- [x] 3.3 FailOpenTests pass: python3 -m unittest discover -s hooks/tests -k FailOpenTests
+- [x] 3.4 UpgradeReminderTests pass: python3 -m unittest discover -s hooks/tests -k UpgradeReminderTests
+- [x] 3.5 ReadOnlyTests pass: python3 -m unittest discover -s hooks/tests -k ReadOnlyTests
+- [x] 3.6 Script imports no networking module
 #### Manual
 - [ ] 3.7 In Claude Code with the plugin installed, a new session shows the routing map and next step
 - [ ] 3.8 In Codex CLI, after trusting the hooks in /hooks, the same map appears, or the PR records that plugin hooks are desktop-only
