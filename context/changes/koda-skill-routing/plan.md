@@ -136,7 +136,7 @@ request to Koda in chat, or write to koda@rocksoft.pl.
 ## Increments
 | # | Name | Phases | Depends on | User-visible | Status | PR |
 |---|---|---|---|---|---|---|
-| 1 | Distribution: rs-skills installs with Koda | 1-2 | — | yes | pending | — |
+| 1 | Distribution: rs-skills installs with Koda | 1-2 | — | yes | in-progress | — |
 | 2 | Hooks, routing and docs | 3-6 | 1 | yes | pending | — |
 
 ## Critical Implementation Details
