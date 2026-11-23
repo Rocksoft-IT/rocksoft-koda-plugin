@@ -464,8 +464,8 @@ hook `timeout` is 5 s.
 
 ### Phase 2: Client setup guide
 #### Automated
-- [x] 2.1 docs/client-setup.md exists and contains extraKnownMarketplaces, autoUpdate, enabledPlugins, both Codex plugin tables, the marketplace upgrade command and /hooks
-- [x] 2.2 README.md links to docs/client-setup.md
+- [x] 2.1 docs/client-setup.md exists and contains extraKnownMarketplaces, autoUpdate, enabledPlugins, both Codex plugin tables, the marketplace upgrade command and /hooks — 5984e53
+- [x] 2.2 README.md links to docs/client-setup.md — 5984e53
 #### Manual
 - [ ] 2.3 A Fide developer can follow the guide on a fresh clone without naming any skill (read-through on the PR)
 
