@@ -490,10 +490,171 @@ def session_start(event):
 
 
 # --------------------------------------------------------------------------
+# prompt: routing hint for work-like prompts
+# --------------------------------------------------------------------------
+
+# Matched after lowercasing and removing accents, at the start of the prompt (after
+# a polite opener). English, Norwegian and Polish. A value is the rs-* capability the
+# verb names (None = a plain change request).
+CHANGE_VERBS = {
+    "add": None, "fix": None, "change": None, "create": None, "remove": None,
+    "update": None, "refactor": None, "rename": None, "delete": None, "replace": None,
+    "introduce": None, "migrate": None, "make": None,
+    "implement": "implement", "build": "implement",
+    "legg til": None, "fiks": None, "endre": None, "lag": None, "fjern": None,
+    "oppdater": None, "slett": None, "rett opp": None,
+    "implementer": "implement", "bygg": "implement",
+    "dodaj": None, "popraw": None, "zmien": None, "napraw": None, "usun": None,
+    "stworz": None, "zaktualizuj": None, "zmodyfikuj": None, "przepisz": None,
+    "zaimplementuj": "implement", "zbuduj": "implement",
+}
+WORKFLOW_VERBS = {
+    "review": "review", "preflight": "review", "przejrzyj": "review",
+    "plan": "plan", "planlegg": "plan", "zaplanuj": "plan",
+    "archive": "archive", "arkiver": "archive", "zarchiwizuj": "archive",
+    "orchestrate": "orchestrate",
+}
+QUESTION_WORDS = (
+    "how", "why", "what", "where", "when", "who", "which", "is", "are", "does", "do",
+    "hvordan", "hvorfor", "hva", "hvor", "hvem", "hvilken", "er",
+    "jak", "dlaczego", "co", "czy", "kiedy", "gdzie", "kto", "ktory",
+)
+OPENERS = (
+    "please", "pls", "can you", "could you", "would you", "will you", "i want you to",
+    "i need you to", "i would like you to", "lets", "let s", "go ahead and", "just",
+    "kan du", "kunne du", "vennligst", "jeg vil at du", "jeg trenger at du",
+    "prosze", "czy mozesz", "mozesz", "czy moglbys", "moglbys", "chce zebys",
+    "koda", "hey", "hi", "hello", "hei", "czesc",
+)
+
+
+def fold(text):
+    text = unicodedata.normalize("NFD", text.lower())
+    text = "".join(ch for ch in text if not unicodedata.combining(ch))
+    return text.replace("\u0142", "l")
+
+
+def classify_prompt(prompt):
+    """Return (kind, capability) for a work-like prompt, else None.
+
+    kind is "change" (a change request) or "workflow" (review/plan/archive/orchestrate).
+    A question never classifies, even when it ends the way a request would."""
+    text = fold(prompt).strip()
+    if not text or text.startswith("/"):
+        return None
+    text = re.sub(r"[\"'`*_>#\-]+", " ", text[:400])
+    text = re.sub(r"\s+", " ", text).strip()
+    changed = True
+    while changed:
+        changed = False
+        for opener in OPENERS:
+            match = re.match(r"^%s\b[\s,:;.!]*" % re.escape(opener), text)
+            if match and match.end() < len(text):
+                text = text[match.end():]
+                changed = True
+    first = re.match(r"^[a-z]+", text)
+    if first and first.group(0) in QUESTION_WORDS:
+        return None
+    for table, kind in ((CHANGE_VERBS, "change"), (WORKFLOW_VERBS, "workflow")):
+        for verb in sorted(table, key=len, reverse=True):
+            if re.match(r"^%s\b" % re.escape(verb), text):
+                return kind, table[verb]
+    return None
+
+
+def resolve_choice(config, entry, overlap_id):
+    """Team policy in koda.json wins over the developer's personal choice."""
+    team = config_overlaps(config).get(overlap_id)
+    if team:
+        return team
+    choices = entry.get("choices")
+    if isinstance(choices, dict) and choices.get(overlap_id) in ("rs", "repo"):
+        return choices[overlap_id]
+    return None
+
+
+def overlap_lines(overlaps, config, entry, script):
+    """Instructions for the overlaps of one capability: stored choices, then one question."""
+    lines = []
+    asked = False
+    for overlap in overlaps:
+        item = overlap["item"]
+        label = "%s `%s` (%s)" % (item["kind"], item["name"], item["source"])
+        choice = resolve_choice(config, entry, overlap["id"])
+        if choice == "rs":
+            lines.append("Overlap %s: the stored choice is %s; use it and do not ask."
+                         % (overlap["id"], overlap["rs"]))
+        elif choice == "repo":
+            lines.append("Overlap %s: the stored choice is the repo's %s; use it and do not ask."
+                         % (overlap["id"], label))
+        elif not asked:
+            asked = True
+            lines.append("Two installed items fit this request equally: %s and %s. Ask the user "
+                         "ONE question offering both, then record the answer with "
+                         "`python3 \"%s\" record choice %s rs|repo` (add --repo to share it with "
+                         "the whole team in .rocksoft/koda.json) and continue with the chosen one. "
+                         "It is asked once; do not ask again for this pair."
+                         % (label, overlap["rs"], script, overlap["id"]))
+    return lines
+
+
+def prompt_hook(event):
+    prompt = event.get("prompt")
+    if not isinstance(prompt, str):
+        return None
+    classified = classify_prompt(prompt)
+    if classified is None:
+        return None
+    kind, verb_capability = classified
+    root = find_repo_root(event.get("cwd") or os.getcwd())
+    if root is None:
+        return None
+    config = load_koda_json(root)
+    mode = config_mode(config)
+    script = str(script_path())
+    lines = ["Koda routing hint (the prompt is not changed or blocked; if this is not really a "
+             "request to change or review something, ignore this hint):"]
+
+    capability = verb_capability
+    if kind == "change":
+        if mode == "server":
+            capability = None
+            lines.append("Delivery mode is server: start the rs-feature skill with the user's words "
+                         "(no need to name the skill to the user); Koda builds it from an issue.")
+        elif mode == "local":
+            lines.append("Delivery mode is local: run the rs-skills:rs-orchestrator agent with "
+                         "`Request: <the user's words>` and report its result.")
+            capability = capability or "orchestrate"
+        else:
+            lines.append("No delivery mode is saved for this repo yet. Ask the user ONCE, with two "
+                         "options: local (built in this session by the rs-skills:rs-orchestrator "
+                         "agent) or server (Koda builds it from an issue through the rs-feature "
+                         "skill). Then run `python3 \"%s\" record mode local|server` with the "
+                         "answer and continue on that path; it is never asked again." % script)
+            capability = capability or "orchestrate"
+    else:
+        spec = CAPABILITIES.get(capability or "")
+        if spec:
+            lines.append("This looks like a request for the %s step: use the %s skill or agent "
+                         "from rs-skills." % (capability, spec["rs"]))
+
+    if capability:
+        overlaps = [o for o in find_overlaps(build_catalog(root)) if o["capability"] == capability]
+        if overlaps:
+            entry = repo_state(load_state(), root)
+            extra = overlap_lines(overlaps, config, entry, script)
+            if extra and kind == "change" and mode is None:
+                extra[0] = "If local is chosen: " + extra[0]
+            lines += extra
+    return {"hookSpecificOutput": {"hookEventName": "UserPromptSubmit",
+                                   "additionalContext": "\n".join(lines)}}
+
+
+# --------------------------------------------------------------------------
 # Entry point: fail-open envelope
 # --------------------------------------------------------------------------
 
-HOOKS = {"session-start": session_start}
+HOOKS = {"session-start": session_start, "prompt": prompt_hook}
 
 
 def _alarm_handler(signum, frame):

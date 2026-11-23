@@ -483,9 +483,9 @@ hook `timeout` is 5 s.
 
 ### Phase 4: Koda doctor, record subcommand and choices
 #### Automated
-- [x] 4.1 DoctorTests pass: python3 -m unittest discover -s hooks/tests -k DoctorTests
-- [x] 4.2 RecordTests pass: python3 -m unittest discover -s hooks/tests -k RecordTests
-- [x] 4.3 SessionStartTests still pass
+- [x] 4.1 DoctorTests pass: python3 -m unittest discover -s hooks/tests -k DoctorTests — 616fef7
+- [x] 4.2 RecordTests pass: python3 -m unittest discover -s hooks/tests -k RecordTests — 616fef7
+- [x] 4.3 SessionStartTests still pass — 616fef7
 #### Manual
 - [ ] 4.4 On a real machine with a repo /preflight command and rs-impl_review installed, the first session names the overlap and the second shows nothing (AC-05)
 

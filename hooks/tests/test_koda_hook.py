@@ -442,6 +442,174 @@ class RecordTests(HookCase):
         self.assertEqual([p.name for p in (self.repo / ".rocksoft").iterdir()], ["koda.json"])
 
 
+class PromptTests(HookCase):
+    def prompt(self, text, **env_extra):
+        event = {"cwd": str(self.repo), "prompt": text, "hook_event_name": "UserPromptSubmit"}
+        return self.run_script("prompt", stdin=json.dumps(event), env=self.env(**env_extra))
+
+    def hint(self, text, **env_extra):
+        return self.context_of(self.prompt(text, **env_extra))
+
+    def assert_no_hint(self, text):
+        result = self.prompt(text)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "", text)
+
+    def add_rs_skill(self, name):
+        folder = (self.home / ".claude" / "plugins" / "cache" / "rocksoft" / "rs-skills"
+                  / "3.2.0" / "skills" / name)
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / "SKILL.md").write_text("---\nname: %s\ndescription: rs skill\n---\n" % name)
+
+    def add_repo_command(self, name):
+        folder = self.repo / ".claude" / "commands"
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / (name + ".md")).write_text("---\ndescription: repo command\n---\n")
+
+    def test_unset_mode_asks_once_with_the_record_command(self):
+        self.init_repo()
+        text = self.hint("add a login page")
+        self.assertIn("Ask the user ONCE", text)
+        self.assertIn("local", text)
+        self.assertIn("server", text)
+        self.assertIn("record mode local|server", text)
+        self.assertIn(str(SCRIPT), text)
+        saved = self.run_script("record", "mode", "local")
+        self.assertEqual(saved.returncode, 0, saved.stderr)
+        after = self.hint("add a login page")
+        self.assertNotIn("Ask the user ONCE", after)
+        self.assertNotIn("record mode", after)
+        self.assertIn("rs-skills:rs-orchestrator", after)
+
+    def test_server_mode_routes_to_rs_feature_silently(self):
+        self.init_repo()
+        self.write_koda_json({"version": 1, "mode": "server"})
+        text = self.hint("fix the invoice total rounding")
+        self.assertIn("rs-feature", text)
+        self.assertIn("no need to name the skill", text)
+        self.assertNotIn("rs-orchestrator", text)
+        self.assertNotIn("record mode", text)
+
+    def test_local_mode_routes_to_the_orchestrator(self):
+        self.init_repo()
+        self.write_koda_json({"version": 1, "mode": "local"})
+        text = self.hint("fix the invoice total rounding")
+        self.assertIn("rs-skills:rs-orchestrator", text)
+        self.assertIn("Request:", text)
+        self.assertNotIn("rs-feature", text)
+
+    def test_questions_are_not_routed(self):
+        self.init_repo()
+        for mode in (None, "local", "server"):
+            if mode:
+                self.write_koda_json({"version": 1, "mode": mode})
+            for question in ("how does invoice rounding work?", "hvordan fungerer fakturaavrunding?",
+                             "jak dziala zaokraglanie faktur?", "What should I add here?",
+                             "why does the build fail?", "dlaczego to nie dziala?",
+                             "explain the invoice flow", "thanks!", "/help", "hi"):
+                self.assert_no_hint(question)
+
+    def test_norwegian_and_polish_verbs_are_detected(self):
+        self.init_repo()
+        for request in ("Legg til en knapp for eksport", "fiks feilen i fakturaen",
+                        "Endre fargen pa knappen", "lag en ny rapport", "fjern den gamle siden",
+                        "Dodaj przycisk eksportu", "popraw zaokraglanie faktury",
+                        "Zmien kolor przycisku", "napraw blad w fakturze", "usun stara strone",
+                        "Stw\u00f3rz nowy raport", "Popraw zaokr\u0105glanie"):
+            self.assertIn("delivery mode", self.hint(request).lower(), request)
+
+    def test_english_verbs_and_polite_openers_are_detected(self):
+        self.init_repo()
+        for request in ("add X", "Fix the bug", "change the title", "implement export",
+                        "build a report", "create a page", "remove the banner",
+                        "update the footer", "please add a footer", "Can you fix the total?",
+                        "could you remove the banner", "kan du legg til en knapp?",
+                        "czy mo\u017cesz dodaj przycisk"):
+            self.assertIn("Koda routing hint", self.hint(request), request)
+
+    def test_overlap_without_choice_asks_one_question_then_remembers(self):
+        self.init_repo()
+        self.write_koda_json({"version": 1, "mode": "local"})
+        self.add_rs_skill("rs-orchestrator")
+        self.add_repo_command("orchestrate")
+        first = self.hint("add a feature flag")
+        self.assertEqual(first.count("Ask the user ONE question"), 1)
+        self.assertIn("orchestrate", first)
+        self.assertIn("rs-orchestrator", first)
+        self.assertIn("record choice orchestrate-vs-rs-orchestrator rs|repo", first)
+        saved = self.run_script("record", "choice", "orchestrate-vs-rs-orchestrator", "repo")
+        self.assertEqual(saved.returncode, 0, saved.stderr)
+        second = self.hint("add a feature flag")
+        self.assertNotIn("Ask the user ONE question", second)
+        self.assertIn("do not ask", second)
+        self.assertIn("repo's", second)
+
+    def test_team_choice_wins_over_a_personal_one(self):
+        self.init_repo()
+        self.add_rs_skill("rs-impl_review")
+        self.add_repo_command("preflight")
+        pair = "preflight-vs-rs-impl_review"
+        self.assertEqual(self.run_script("record", "choice", pair, "repo").returncode, 0)
+        self.assertEqual(self.run_script("record", "choice", pair, "rs", "--repo").returncode, 0)
+        text = self.hint("review this branch")
+        self.assertIn("the stored choice is rs-impl_review", text)
+        self.assertNotIn("Ask the user ONE question", text)
+
+    def test_workflow_prompt_names_the_rs_skill(self):
+        self.init_repo()
+        text = self.hint("review this branch")
+        self.assertIn("rs-impl_review", text)
+        self.assertNotIn("Ask the user ONCE", text)
+        self.assertNotIn("record mode", text)
+
+    def test_server_mode_has_no_overlap_question_for_a_change(self):
+        self.init_repo()
+        self.write_koda_json({"version": 1, "mode": "server"})
+        self.add_rs_skill("rs-orchestrator")
+        self.add_repo_command("orchestrate")
+        self.assertNotIn("Ask the user ONE question", self.hint("add a feature flag"))
+
+    def test_unset_mode_and_overlap_asks_the_mode_first(self):
+        self.init_repo()
+        self.add_rs_skill("rs-orchestrator")
+        self.add_repo_command("orchestrate")
+        text = self.hint("add a feature flag")
+        self.assertIn("Ask the user ONCE", text)
+        self.assertIn("If local is chosen: Two installed items", text)
+
+    def test_output_never_blocks_or_rewrites(self):
+        self.init_repo()
+        result = self.prompt("add a login page")
+        self.assertEqual(result.returncode, 0)
+        payload = json.loads(result.stdout)
+        self.assertEqual(list(payload), ["hookSpecificOutput"])
+        self.assertEqual(set(payload["hookSpecificOutput"]),
+                         {"hookEventName", "additionalContext"})
+        self.assertNotIn("decision", payload)
+
+    def test_bad_input_gives_empty_output(self):
+        self.init_repo()
+        for stdin in ("not json", "", "[]", json.dumps({"cwd": str(self.repo)}),
+                      json.dumps({"cwd": str(self.repo), "prompt": 5})):
+            result = self.run_script("prompt", stdin=stdin)
+            self.assertEqual(result.returncode, 0)
+            self.assertEqual(result.stdout, "", stdin)
+
+    def test_non_repo_cwd_gives_empty_output(self):
+        outside = self.tmp / "outside"
+        outside.mkdir()
+        result = self.run_script("prompt", cwd=outside,
+                                 stdin=json.dumps({"cwd": str(outside), "prompt": "add x"}))
+        self.assertEqual((result.returncode, result.stdout), (0, ""))
+
+    def test_prompt_hook_leaves_the_repo_untouched(self):
+        self.init_repo()
+        self.commit_all()
+        self.prompt("add a login page")
+        self.assertEqual(self.git("status", "--porcelain"), "")
+        self.assertFalse((self.repo / ".rocksoft").exists())
+
+
 class ReadOnlyTests(HookCase):
     def test_session_start_leaves_the_repo_untouched(self):
         self.init_repo()
@@ -451,6 +619,7 @@ class ReadOnlyTests(HookCase):
         before = self.git("status", "--porcelain")
         self.assertEqual(before, "")
         self.session_start()
+        self.run_script("prompt", stdin=json.dumps({"cwd": str(self.repo), "prompt": "add x"}))
         self.assertEqual(self.git("status", "--porcelain"), "")
         self.assertEqual(sorted(p.name for p in self.repo.iterdir()),
                          sorted([".git", ".rocksoft", "README.md", "context"]))
