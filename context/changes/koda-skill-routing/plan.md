@@ -501,9 +501,9 @@ hook `timeout` is 5 s.
 
 ### Phase 6: AGENTS.md template, README, USAGE and tech stack
 #### Automated
-- [x] 6.1 docs/agents-md-section.md exists and contains koda@rocksoft.pl, AGENTS.md, CLAUDE.md, /hooks, .rocksoft/koda.json and client-setup.md
-- [x] 6.2 README.md no longer says the plugin never reads local files and mentions .rocksoft/koda.json and hooks/
-- [x] 6.3 context/foundation/tech-stack.md names Python 3 and the unittest command
-- [x] 6.4 Chat behaviour is preserved: git diff --quiet main...HEAD -- skills .mcp.json docs/flow-contract.md
+- [x] 6.1 docs/agents-md-section.md exists and contains koda@rocksoft.pl, AGENTS.md, CLAUDE.md, /hooks, .rocksoft/koda.json and client-setup.md — 170aaed
+- [x] 6.2 README.md no longer says the plugin never reads local files and mentions .rocksoft/koda.json and hooks/ — 170aaed
+- [x] 6.3 context/foundation/tech-stack.md names Python 3 and the unittest command — 170aaed
+- [x] 6.4 Chat behaviour is preserved: git diff --quiet main...HEAD -- skills .mcp.json docs/flow-contract.md — 170aaed
 #### Manual
 - [ ] 6.5 A client reader understands from README and the template which prompts are routed, what is read locally, that nothing is sent, and whom to contact
