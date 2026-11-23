@@ -18,6 +18,7 @@ import os
 import re
 import signal
 import sys
+import tempfile
 import time
 import unicodedata
 from pathlib import Path
@@ -271,12 +272,164 @@ def is_ours(item):
 
 
 def rs_items(catalog):
-    return sorted({i["name"] for i in catalog if i["name"].startswith("rs-")})
+    """Names of the rs-skills items (Koda's own rs-feature does not count)."""
+    return sorted({i["name"] for i in catalog
+                   if i["name"].startswith("rs-") and i["name"] != "rs-feature"
+                   and i["source"] != "plugin:rocksoft-koda"})
+
+
+# --------------------------------------------------------------------------
+# Koda doctor: overlaps between installed items and rs-* capabilities
+# --------------------------------------------------------------------------
+
+# name_tokens: whole words of the item name; name_contains: substrings of the name
+# with punctuation removed; phrases: specific phrases in the description.
+CAPABILITIES = {
+    "orchestrate": {"rs": "rs-orchestrator",
+                    "name_tokens": {"orchestrate", "orchestrator", "orchestration", "autopilot"},
+                    "name_contains": [], "phrases": ["orchestrat", "autopilot"]},
+    "plan": {"rs": "rs-plan",
+             "name_tokens": {"plan", "planner", "planning"},
+             "name_contains": [], "phrases": ["implementation plan", "write a plan"]},
+    "implement": {"rs": "rs-implement",
+                  "name_tokens": {"implement", "implementer", "implementation"},
+                  "name_contains": [], "phrases": ["implement the plan", "implement a plan"]},
+    "review": {"rs": "rs-impl_review",
+               "name_tokens": {"review", "reviewer", "codereview"},
+               "name_contains": ["preflight"],
+               "phrases": ["code review", "review the diff", "pre-flight", "preflight"]},
+    "archive": {"rs": "rs-archive",
+                "name_tokens": {"archive", "archiver", "archivist", "closeout"},
+                "name_contains": [], "phrases": ["archive a change", "archive the change"]},
+}
+
+
+def item_matches(item, spec):
+    name = item["name"].lower()
+    tokens = set(re.split(r"[^a-z0-9]+", name))
+    squeezed = re.sub(r"[^a-z0-9]", "", name)
+    if tokens & spec["name_tokens"]:
+        return True
+    if any(part in squeezed for part in spec["name_contains"]):
+        return True
+    description = item.get("description", "").lower()
+    return any(phrase in description for phrase in spec["phrases"])
+
+
+def find_overlaps(catalog):
+    """Pairs of (repo-side item, rs-* skill) that cover the same capability."""
+    installed_rs = set(rs_items(catalog))
+    overlaps = []
+    seen = set()
+    for item in catalog:
+        if is_ours(item):
+            continue
+        for capability, spec in CAPABILITIES.items():
+            if spec["rs"] not in installed_rs or not item_matches(item, spec):
+                continue
+            overlap_id = "%s-vs-%s" % (item["name"], spec["rs"])
+            if overlap_id in seen:
+                continue
+            seen.add(overlap_id)
+            overlaps.append({"id": overlap_id, "capability": capability,
+                             "item": item, "rs": spec["rs"]})
+    return overlaps
+
+
+def catalog_fingerprint(catalog):
+    keys = sorted([i["kind"], i["name"], i["source"]] for i in catalog)
+    return hashlib.sha256(json.dumps(keys).encode("utf-8")).hexdigest()
+
+
+def doctor_notice(overlaps):
+    lines = ["Koda doctor: installed skills, commands or agents overlap with Rocksoft's rs-* skills:"]
+    for overlap in overlaps[:5]:
+        item = overlap["item"]
+        lines.append("- %s `%s` (%s) vs %s  [id: %s]"
+                     % (item["kind"], item["name"], item["source"], overlap["rs"], overlap["id"]))
+    if len(overlaps) > 5:
+        lines.append("- and %d more" % (len(overlaps) - 5))
+    lines.append("Default rule: an unnamed request goes to the rs-* skill; the repo's own command "
+                 "stays available by name. A team overrides it with overlaps.<id> = \"rs\" or "
+                 "\"repo\" in .rocksoft/koda.json. Mention this once, briefly; it is shown only "
+                 "when the installed set changes.")
+    return lines
+
+
+# --------------------------------------------------------------------------
+# Machine-local state (never inside the repository)
+# --------------------------------------------------------------------------
+
+def data_dir():
+    for name in ("CLAUDE_PLUGIN_DATA", "PLUGIN_DATA"):
+        value = os.environ.get(name)
+        if value:
+            return Path(value)
+    cache = os.environ.get("XDG_CACHE_HOME")
+    base = Path(cache) if cache else Path.home() / ".cache"
+    return base / "rocksoft-koda"
+
+
+def repo_key(root):
+    return hashlib.sha256(str(root).encode("utf-8")).hexdigest()[:16]
+
+
+def load_state():
+    try:
+        data = json.loads((data_dir() / "state.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"repos": {}}
+    if not isinstance(data, dict) or not isinstance(data.get("repos"), dict):
+        return {"repos": {}}
+    return data
+
+
+def repo_state(state, root):
+    entry = state["repos"].setdefault(repo_key(root), {})
+    if not isinstance(entry, dict):
+        entry = state["repos"][repo_key(root)] = {}
+    return entry
+
+
+def atomic_write_json(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    handle, tmp = tempfile.mkstemp(dir=str(path.parent), prefix=".tmp-", suffix=".json")
+    try:
+        with os.fdopen(handle, "w", encoding="utf-8") as out:
+            json.dump(data, out, indent=2)
+            out.write("\n")
+        os.replace(tmp, str(path))
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
+def save_state(state):
+    atomic_write_json(data_dir() / "state.json", state)
 
 
 # --------------------------------------------------------------------------
 # session-start
 # --------------------------------------------------------------------------
+
+def doctor_lines(root, catalog):
+    """The overlap notice, only when the installed set changed since the last session."""
+    fingerprint = catalog_fingerprint(catalog)
+    state = load_state()
+    entry = repo_state(state, root)
+    if entry.get("fingerprint") == fingerprint:
+        return []
+    entry["fingerprint"] = fingerprint
+    try:
+        save_state(state)
+    except OSError:
+        pass
+    overlaps = find_overlaps(catalog)
+    return doctor_notice(overlaps) if overlaps else []
+
 
 def session_start(event):
     root = find_repo_root(event.get("cwd") or os.getcwd())
@@ -324,6 +477,7 @@ def session_start(event):
     if not rs_items(catalog):
         lines.append("Note: no rs-* skills were detected locally; if rs-skills is not enabled, "
                      "see docs/client-setup.md in the Koda plugin.")
+    lines += doctor_lines(root, catalog)
 
     own = own_version()
     minimum = config_min_version(config)
@@ -386,9 +540,83 @@ def main(argv):
     return 0
 
 
-def record_main(args):  # replaced in phase 4
-    sys.stderr.write("record is not available yet\n")
+RECORD_USAGE = ("usage: koda_hook.py record mode local|server\n"
+                "       koda_hook.py record choice <overlap-id> rs|repo [--repo]\n")
+OVERLAP_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:~-]{0,119}$")
+
+
+def record_fail(message):
+    sys.stderr.write("koda_hook.py record: %s\n%s" % (message, RECORD_USAGE))
     return 1
+
+
+def update_koda_json(root, mutate):
+    """Read-modify-write `.rocksoft/koda.json`, keeping unknown keys; refuses a malformed file."""
+    path = root / ".rocksoft" / "koda.json"
+    data = {}
+    if path.exists():
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            raise ValueError("%s is not valid JSON; fix or remove it first" % path)
+        if not isinstance(data, dict):
+            raise ValueError("%s must hold a JSON object" % path)
+    mutate(data)
+    data["version"] = 1
+    atomic_write_json(path, data)
+    return path
+
+
+def record_main(args):
+    """The only writer of `.rocksoft/koda.json` and of the personal choice file."""
+    try:
+        if not args:
+            return record_fail("missing subcommand")
+        root = find_repo_root(os.getcwd())
+        if args[0] == "mode":
+            if len(args) != 2 or args[1] not in ("local", "server"):
+                return record_fail("mode must be local or server")
+            if root is None:
+                return record_fail("not inside a git repository")
+            value = args[1]
+            path = update_koda_json(root, lambda data: data.__setitem__("mode", value))
+            print("Saved delivery mode %s in %s" % (value, path))
+            return 0
+        if args[0] == "choice":
+            flags = [a for a in args[1:] if a.startswith("--")]
+            rest = [a for a in args[1:] if not a.startswith("--")]
+            if any(f != "--repo" for f in flags) or len(rest) != 2:
+                return record_fail("choice takes <overlap-id> rs|repo and optionally --repo")
+            overlap_id, value = rest
+            if not OVERLAP_ID.match(overlap_id):
+                return record_fail("invalid overlap id %r" % overlap_id)
+            if value not in ("rs", "repo"):
+                return record_fail("choice must be rs or repo")
+            if root is None:
+                return record_fail("not inside a git repository")
+            if flags:
+                def mutate(data):
+                    overlaps = data.get("overlaps")
+                    if not isinstance(overlaps, dict):
+                        overlaps = data["overlaps"] = {}
+                    overlaps[overlap_id] = value
+                path = update_koda_json(root, mutate)
+                print("Saved repo-wide choice %s=%s in %s" % (overlap_id, value, path))
+            else:
+                state = load_state()
+                entry = repo_state(state, root)
+                choices = entry.get("choices")
+                if not isinstance(choices, dict):
+                    choices = entry["choices"] = {}
+                choices[overlap_id] = value
+                save_state(state)
+                print("Saved personal choice %s=%s (stored outside the repository)"
+                      % (overlap_id, value))
+            return 0
+        return record_fail("unknown subcommand %r" % args[0])
+    except (OSError, ValueError) as error:
+        sys.stderr.write("koda_hook.py record: %s\n" % error)
+        return 1
 
 
 if __name__ == "__main__":

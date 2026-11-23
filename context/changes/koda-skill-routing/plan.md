@@ -471,21 +471,21 @@ hook `timeout` is 5 s.
 
 ### Phase 3: Hook runtime and session start
 #### Automated
-- [x] 3.1 hooks/hooks.json parses, declares SessionStart and UserPromptSubmit, every timeout is 10 s or less
-- [x] 3.2 SessionStartTests pass: python3 -m unittest discover -s hooks/tests -k SessionStartTests
-- [x] 3.3 FailOpenTests pass: python3 -m unittest discover -s hooks/tests -k FailOpenTests
-- [x] 3.4 UpgradeReminderTests pass: python3 -m unittest discover -s hooks/tests -k UpgradeReminderTests
-- [x] 3.5 ReadOnlyTests pass: python3 -m unittest discover -s hooks/tests -k ReadOnlyTests
-- [x] 3.6 Script imports no networking module
+- [x] 3.1 hooks/hooks.json parses, declares SessionStart and UserPromptSubmit, every timeout is 10 s or less — 385f544
+- [x] 3.2 SessionStartTests pass: python3 -m unittest discover -s hooks/tests -k SessionStartTests — 385f544
+- [x] 3.3 FailOpenTests pass: python3 -m unittest discover -s hooks/tests -k FailOpenTests — 385f544
+- [x] 3.4 UpgradeReminderTests pass: python3 -m unittest discover -s hooks/tests -k UpgradeReminderTests — 385f544
+- [x] 3.5 ReadOnlyTests pass: python3 -m unittest discover -s hooks/tests -k ReadOnlyTests — 385f544
+- [x] 3.6 Script imports no networking module — 385f544
 #### Manual
 - [ ] 3.7 In Claude Code with the plugin installed, a new session shows the routing map and next step
 - [ ] 3.8 In Codex CLI, after trusting the hooks in /hooks, the same map appears, or the PR records that plugin hooks are desktop-only
 
 ### Phase 4: Koda doctor, record subcommand and choices
 #### Automated
-- [ ] 4.1 DoctorTests pass: python3 -m unittest discover -s hooks/tests -k DoctorTests
-- [ ] 4.2 RecordTests pass: python3 -m unittest discover -s hooks/tests -k RecordTests
-- [ ] 4.3 SessionStartTests still pass
+- [x] 4.1 DoctorTests pass: python3 -m unittest discover -s hooks/tests -k DoctorTests
+- [x] 4.2 RecordTests pass: python3 -m unittest discover -s hooks/tests -k RecordTests
+- [x] 4.3 SessionStartTests still pass
 #### Manual
 - [ ] 4.4 On a real machine with a repo /preflight command and rs-impl_review installed, the first session names the overlap and the second shows nothing (AC-05)
 

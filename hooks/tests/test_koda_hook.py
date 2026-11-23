@@ -262,6 +262,186 @@ class UpgradeReminderTests(HookCase):
         self.assertIn(self.COMMAND, text)
 
 
+class DoctorTests(HookCase):
+    def add_rs_skill(self, name="rs-impl_review"):
+        folder = (self.home / ".claude" / "plugins" / "cache" / "rocksoft" / "rs-skills"
+                  / "3.2.0" / "skills" / name)
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / "SKILL.md").write_text("---\nname: %s\ndescription: rs skill\n---\n" % name)
+
+    def add_repo_command(self, name, description="Run the checks"):
+        folder = self.repo / ".claude" / "commands"
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / (name + ".md")).write_text("---\ndescription: %s\n---\nbody\n" % description)
+
+    def state(self):
+        return json.loads((self.data / "state.json").read_text())
+
+    def test_overlap_is_reported_once_per_installed_set(self):
+        self.init_repo()
+        self.add_repo_command("preflight")
+        self.add_rs_skill()
+        first = self.context_of(self.session_start())
+        self.assertEqual(first.count("Koda doctor"), 1)
+        self.assertIn("preflight", first)
+        self.assertIn("rs-impl_review", first)
+        self.assertIn("unnamed request goes to the rs-* skill", first)
+        self.assertIn("overlaps.<id>", first)
+        self.assertLessEqual(len(first.splitlines()), 25)
+        second = self.context_of(self.session_start())
+        self.assertNotIn("Koda doctor", second)
+
+    def test_changing_the_installed_set_triggers_the_notice_again(self):
+        self.init_repo()
+        self.add_repo_command("preflight")
+        self.add_rs_skill()
+        self.session_start()
+        self.assertNotIn("Koda doctor", self.context_of(self.session_start()))
+        self.add_repo_command("deploy")
+        self.assertIn("Koda doctor", self.context_of(self.session_start()))
+        self.assertNotIn("Koda doctor", self.context_of(self.session_start()))
+
+    def test_no_overlap_no_notice_but_fingerprint_is_stored(self):
+        self.init_repo()
+        self.add_repo_command("deploy")
+        self.add_rs_skill()
+        self.assertNotIn("Koda doctor", self.context_of(self.session_start()))
+        entries = list(self.state()["repos"].values())
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(len(entries[0]["fingerprint"]), 64)
+
+    def test_overlap_needs_the_rs_skill_to_be_installed(self):
+        self.init_repo()
+        self.add_repo_command("preflight")
+        self.assertNotIn("Koda doctor", self.context_of(self.session_start()))
+
+    def test_rs_items_never_count_as_the_repo_side(self):
+        self.init_repo()
+        self.add_rs_skill("rs-impl_review")
+        self.add_rs_skill("rs-plan")
+        self.assertNotIn("Koda doctor", self.context_of(self.session_start()))
+
+    def test_description_phrase_and_name_keywords_match(self):
+        self.init_repo()
+        self.add_rs_skill("rs-impl_review")
+        self.add_rs_skill("rs-orchestrator")
+        self.add_repo_command("quality-gate", "Run a code review before merge")
+        self.add_repo_command("orchestrate", "Do everything")
+        text = self.context_of(self.session_start())
+        self.assertIn("quality-gate", text)
+        self.assertIn("orchestrate", text)
+        self.assertIn("rs-orchestrator", text)
+
+    def test_unrelated_commands_do_not_overlap(self):
+        self.init_repo()
+        self.add_rs_skill("rs-implement")
+        self.add_rs_skill("rs-impl_review")
+        self.add_repo_command("build", "Build the project")
+        self.add_repo_command("lint", "Lint the project")
+        self.assertNotIn("Koda doctor", self.context_of(self.session_start()))
+
+    def test_user_skills_and_other_plugins_are_scanned(self):
+        self.init_repo()
+        self.add_rs_skill()
+        user_skill = self.home / ".claude" / "skills" / "pr-review"
+        user_skill.mkdir(parents=True)
+        (user_skill / "SKILL.md").write_text("---\nname: pr-review\ndescription: x\n---\n")
+        self.assertIn("pr-review", self.context_of(self.session_start()))
+
+    def test_state_is_kept_per_repository(self):
+        self.init_repo()
+        self.add_repo_command("preflight")
+        self.add_rs_skill()
+        self.session_start()
+        other = self.tmp / "other"
+        other.mkdir()
+        subprocess.run(["git", "init", "-q"], cwd=other, check=True)
+        (other / ".claude" / "commands").mkdir(parents=True)
+        (other / ".claude" / "commands" / "preflight.md").write_text("x")
+        text = self.context_of(self.session_start({"cwd": str(other)}))
+        self.assertIn("Koda doctor", text)
+
+
+class RecordTests(HookCase):
+    def record(self, *args, cwd=None):
+        return self.run_script("record", *args, cwd=cwd)
+
+    def koda_json(self):
+        return json.loads((self.repo / ".rocksoft" / "koda.json").read_text())
+
+    def test_record_mode_writes_valid_json(self):
+        self.init_repo()
+        result = self.record("mode", "local")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.koda_json(), {"version": 1, "mode": "local"})
+        self.assertEqual(self.record("mode", "server").returncode, 0)
+        self.assertEqual(self.koda_json()["mode"], "server")
+
+    def test_record_mode_preserves_unknown_keys(self):
+        self.init_repo()
+        self.write_koda_json({"version": 1, "minKodaVersion": "0.9.0", "custom": {"a": 1},
+                              "overlaps": {"x-vs-rs-plan": "repo"}})
+        self.assertEqual(self.record("mode", "local").returncode, 0)
+        data = self.koda_json()
+        self.assertEqual(data["custom"], {"a": 1})
+        self.assertEqual(data["minKodaVersion"], "0.9.0")
+        self.assertEqual(data["overlaps"], {"x-vs-rs-plan": "repo"})
+        self.assertEqual(data["mode"], "local")
+
+    def test_record_rejects_bad_values_and_writes_nothing(self):
+        self.init_repo()
+        for args in (("mode", "cloud"), ("mode",), ("mode", "local", "extra"), (),
+                     ("bogus",), ("choice", "a-vs-b", "maybe"), ("choice", "bad id!", "rs"),
+                     ("choice", "a-vs-b"), ("choice", "a-vs-b", "rs", "--nope")):
+            result = self.record(*args)
+            self.assertNotEqual(result.returncode, 0, args)
+            self.assertIn("usage", result.stderr, args)
+        self.assertFalse((self.repo / ".rocksoft").exists())
+        self.assertFalse((self.data / "state.json").exists())
+
+    def test_record_choice_repo_goes_into_koda_json(self):
+        self.init_repo()
+        self.assertEqual(self.record("choice", "preflight-vs-rs-impl_review", "repo", "--repo")
+                         .returncode, 0)
+        self.assertEqual(self.koda_json()["overlaps"], {"preflight-vs-rs-impl_review": "repo"})
+        self.assertEqual(self.koda_json()["version"], 1)
+
+    def test_personal_choice_leaves_the_repo_clean(self):
+        self.init_repo()
+        self.commit_all()
+        self.assertEqual(self.record("choice", "preflight-vs-rs-impl_review", "rs").returncode, 0)
+        self.assertEqual(self.git("status", "--porcelain"), "")
+        self.assertFalse((self.repo / ".rocksoft").exists())
+        entry = list(json.loads((self.data / "state.json").read_text())["repos"].values())[0]
+        self.assertEqual(entry["choices"], {"preflight-vs-rs-impl_review": "rs"})
+
+    def test_malformed_existing_file_is_refused_and_untouched(self):
+        self.init_repo()
+        self.write_koda_json("{broken")
+        result = self.record("mode", "local")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual((self.repo / ".rocksoft" / "koda.json").read_text(), "{broken")
+
+    def test_record_from_a_subdirectory_writes_at_the_repo_root(self):
+        self.init_repo()
+        sub = self.repo / "src"
+        sub.mkdir()
+        self.assertEqual(self.record("mode", "server", cwd=sub).returncode, 0)
+        self.assertEqual(self.koda_json()["mode"], "server")
+        self.assertFalse((sub / ".rocksoft").exists())
+
+    def test_record_outside_a_repo_fails(self):
+        outside = self.tmp / "outside"
+        outside.mkdir()
+        result = self.record("mode", "local", cwd=outside)
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_no_temp_files_are_left_behind(self):
+        self.init_repo()
+        self.record("mode", "local")
+        self.assertEqual([p.name for p in (self.repo / ".rocksoft").iterdir()], ["koda.json"])
+
+
 class ReadOnlyTests(HookCase):
     def test_session_start_leaves_the_repo_untouched(self):
         self.init_repo()
