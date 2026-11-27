@@ -230,19 +230,19 @@ No test infrastructure (`context/foundation/tech-stack.md` "Commands": changes a
 
 ### Phase 2: Decision flow
 #### Automated
-- [x] 2.1 `test -f skills/rs-status/references/decide.md`
-- [x] 2.2 `grep -qi 'accept' skills/rs-status/references/decide.md && grep -qi 'request changes\|change request' skills/rs-status/references/decide.md && grep -qi 'merge' skills/rs-status/references/decide.md`
-- [x] 2.3 `grep -qi 'untrusted' skills/rs-status/references/decide.md && grep -qi 'yes' skills/rs-status/references/decide.md`
-- [x] 2.4 `git diff --quiet main -- skills/rs-feature`
+- [x] 2.1 `test -f skills/rs-status/references/decide.md` — eef520d
+- [x] 2.2 `grep -qi 'accept' skills/rs-status/references/decide.md && grep -qi 'request changes\|change request' skills/rs-status/references/decide.md && grep -qi 'merge' skills/rs-status/references/decide.md` — eef520d
+- [x] 2.3 `grep -qi 'untrusted' skills/rs-status/references/decide.md && grep -qi 'yes' skills/rs-status/references/decide.md` — eef520d
+- [x] 2.4 `git diff --quiet main -- skills/rs-feature` — eef520d
 #### Manual
 - [ ] 2.5 A reader walks AC-02 (decide with confirmation) and AC-04 and finds that no write precedes an explicit yes on the shown text.
 
 ### Phase 3: Run recovery flow
 #### Automated
-- [ ] 3.1 `test -f skills/rs-status/references/recover.md`
-- [ ] 3.2 `grep -qi 'resume' skills/rs-status/references/recover.md && grep -qi 'yes' skills/rs-status/references/recover.md`
-- [ ] 3.3 `for f in status decide recover; do grep -q "references/$f.md" skills/rs-status/SKILL.md || exit 1; done`
-- [ ] 3.4 `git diff --quiet main -- skills/rs-feature`
+- [x] 3.1 `test -f skills/rs-status/references/recover.md`
+- [x] 3.2 `grep -qi 'resume' skills/rs-status/references/recover.md && grep -qi 'yes' skills/rs-status/references/recover.md`
+- [x] 3.3 `for f in status decide recover; do grep -q "references/$f.md" skills/rs-status/SKILL.md || exit 1; done`
+- [x] 3.4 `git diff --quiet main -- skills/rs-feature`
 #### Manual
 - [ ] 3.5 A reader walks AC-03 for a blocked run and finds a plain explanation, a confirmed resume and no retry on other ids.
 
