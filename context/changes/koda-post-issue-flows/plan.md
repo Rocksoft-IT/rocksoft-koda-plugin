@@ -88,7 +88,7 @@ Shared conventions (all in `SKILL.md`, applying to every flow):
 | # | Name | Phases | Depends on | User-visible | Status | PR |
 |---|---|---|---|---|---|---|
 | 1 | Post-issue flows skill: status, decide, recover | 1-3 | — | yes | done | — |
-| 2 | Feedback flow and wiring | 4-5 | 1 | yes | pending | — |
+| 2 | Feedback flow and wiring | 4-5 | 1 | yes | in-progress | — |
 
 ## Phase 1: Skill core and status flow
 ### Overview
