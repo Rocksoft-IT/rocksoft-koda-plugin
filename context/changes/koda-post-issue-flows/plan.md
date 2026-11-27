@@ -220,11 +220,11 @@ No test infrastructure (`context/foundation/tech-stack.md` "Commands": changes a
 
 ### Phase 1: Skill core and status flow
 #### Automated
-- [ ] 1.1 `test -f skills/rs-status/SKILL.md && test -f skills/rs-status/references/status.md`
-- [ ] 1.2 `head -1 skills/rs-status/SKILL.md | grep -qx -- '---' && grep -q '^name: rs-status$' skills/rs-status/SKILL.md && grep -q 'mcp__\*' skills/rs-status/SKILL.md`
-- [ ] 1.3 `grep -q 'pending' skills/rs-status/SKILL.md && grep -q 'not_allowed' skills/rs-status/SKILL.md && grep -q 'revoked' skills/rs-status/SKILL.md`
-- [ ] 1.4 `grep -qi 'untrusted' skills/rs-status/SKILL.md && grep -qi 'explicit yes\|clear yes' skills/rs-status/SKILL.md`
-- [ ] 1.5 `git diff --quiet main -- skills/rs-feature`
+- [x] 1.1 `test -f skills/rs-status/SKILL.md && test -f skills/rs-status/references/status.md`
+- [x] 1.2 `head -1 skills/rs-status/SKILL.md | grep -qx -- '---' && grep -q '^name: rs-status$' skills/rs-status/SKILL.md && grep -q 'mcp__\*' skills/rs-status/SKILL.md`
+- [x] 1.3 `grep -q 'pending' skills/rs-status/SKILL.md && grep -q 'not_allowed' skills/rs-status/SKILL.md && grep -q 'revoked' skills/rs-status/SKILL.md`
+- [x] 1.4 `grep -qi 'untrusted' skills/rs-status/SKILL.md && grep -qi 'explicit yes\|clear yes' skills/rs-status/SKILL.md`
+- [x] 1.5 `git diff --quiet main -- skills/rs-feature`
 #### Manual
 - [ ] 1.6 A reader walks AC-01 (status) and AC-03/AC-04 (refusal, untrusted content) through the text and finds each handled.
 
