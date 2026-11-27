@@ -256,10 +256,10 @@ No test infrastructure (`context/foundation/tech-stack.md` "Commands": changes a
 
 ### Phase 5: Wiring and version bump
 #### Automated
-- [x] 5.1 `python3 -m json.tool .claude-plugin/plugin.json >/dev/null && python3 -m json.tool .codex-plugin/plugin.json >/dev/null`
-- [x] 5.2 `grep -q '"version": "0.7.0"' .claude-plugin/plugin.json && grep -q '"version": "0.7.0"' .codex-plugin/plugin.json`
-- [x] 5.3 `grep -q '0.7.0' README.md && grep -q '0.7.0' USAGE.md && ! grep -rq '0\.6\.0' README.md USAGE.md .claude-plugin .codex-plugin`
-- [x] 5.4 `grep -q 'rs-status' skills/rs-feature/SKILL.md && grep -q 'rs-status' README.md && grep -q 'rs-status' USAGE.md`
-- [x] 5.5 `test "$(git diff main -- skills/rs-feature/SKILL.md | grep -c '^[-+][^-+]')" -le 8`
+- [x] 5.1 `python3 -m json.tool .claude-plugin/plugin.json >/dev/null && python3 -m json.tool .codex-plugin/plugin.json >/dev/null` — 6980e8a
+- [x] 5.2 `grep -q '"version": "0.7.0"' .claude-plugin/plugin.json && grep -q '"version": "0.7.0"' .codex-plugin/plugin.json` — 6980e8a
+- [x] 5.3 `grep -q '0.7.0' README.md && grep -q '0.7.0' USAGE.md && ! grep -rq '0\.6\.0' README.md USAGE.md .claude-plugin .codex-plugin` — 6980e8a
+- [x] 5.4 `grep -q 'rs-status' skills/rs-feature/SKILL.md && grep -q 'rs-status' README.md && grep -q 'rs-status' USAGE.md` — 6980e8a
+- [x] 5.5 `test "$(git diff main -- skills/rs-feature/SKILL.md | grep -c '^[-+][^-+]')" -le 8` — 6980e8a
 #### Manual
 - [ ] 5.6 A reader confirms `rs-feature` reads and behaves as before except for the closing line.
