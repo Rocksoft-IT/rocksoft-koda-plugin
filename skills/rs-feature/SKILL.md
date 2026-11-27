@@ -124,6 +124,21 @@ again as above.
 
 ## Initial response
 
+- **If the client gives an issue number or link, or says an issue already
+  exists, and asks to build or fix that issue itself** (the request is that
+  issue's work, not a mention of it as background), the work
+  already has an issue: do not create a duplicate and do not build the change.
+  For a bare tracker id (for example "Linear 1687") no tool can look issues up, so ask
+  ONE question in the client's language: "Is there already a GitHub issue for
+  this?" If yes, or if the client already gave the number or link, tell them,
+  in their language, that the issue already exists and that the run starts
+  from the issue's `rs-feature` / `rs-bug` label, which this skill cannot add;
+  ask them to add the label or to send the issue number to their Rocksoft
+  contact. No tool is called, so the sign-in check of Step 0 is not needed.
+  Stop there. This is a complete outcome, not an error. If the answer is no,
+  continue with Step 0. Also continue with Step 0 if the existing issue is
+  wrong or incomplete, or the client says the request is separate or new
+  (for example "like #123, but for invoices").
 - **If the client's message already describes the request**, keep it verbatim
   as the *initial request* and go straight to Step 0. Do not paraphrase it back
   yet.
@@ -401,7 +416,9 @@ closing `rs-status` line above (once, after the last issue of a batch).
 
 1. **One artifact, one place.** The issue is the only output. Never write local
    files, never open PRs, never call `create_spec_pr` or `create_change_pr`
-   even if they are exposed.
+   even if they are exposed, and never implement the request yourself,
+   including when its issue already exists: building happens in Rocksoft Flow
+   after the issue carries the `rs-feature` / `rs-bug` label.
 2. **Repository is mandatory and comes from Rocksoft Flow.** No free-text repo
    names, no guessing `git_url`, no fallback repository. A `git_url` passed to
    `create_feature_issue` must be either a repository from `list_repositories`
