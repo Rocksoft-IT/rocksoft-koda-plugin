@@ -141,6 +141,7 @@ in `references/` and are read when needed, not up front.
 | know what is waiting for them, where a request stands, or says nothing specific ("what's waiting for me?", "co na mnie czeka") | Status | `references/status.md` |
 | look at, discuss, accept, or ask for changes on a pull request waiting for them | Decide | `references/decide.md` |
 | understand why a run failed or is blocked, or continue it | Recover | `references/recover.md` |
+| give feedback about the plugin or Koda | Feedback | `references/feedback.md` |
 
 Status is the front door: when the intent is unclear, start with Status. Decide
 and Recover are reachable from a Status item or directly (the client names the

@@ -365,6 +365,8 @@ Otherwise, on success print the link, number, and repository:
 
 > Created issue #<n> in <owner>/<repo>: <url>
 > Rocksoft picks it up from here. You'll get updates on the issue itself.
+>
+> Later, ask me "what's waiting for me?" in this chat (rs-status) to check status and decide.
 
 Handle other failures plainly:
 
@@ -392,7 +394,8 @@ Handle other failures plainly:
 On no: "Understood — nothing was sent." Keep the draft(s) in the conversation
 so the client can come back to them; do not resend unless asked.
 
-Step 6 is the last step. Do not propose next actions beyond it.
+Step 6 is the last step. Do not propose next actions beyond it, except the one
+closing `rs-status` line above (once, after the last issue of a batch).
 
 ## Guardrails
 

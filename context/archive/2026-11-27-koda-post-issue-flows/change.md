@@ -1,10 +1,10 @@
 ---
 change_id: koda-post-issue-flows
 title: Clients can check status, decide and give feedback from the Koda plugin
-status: implementing
+status: archived
 created: 2026-11-27
 updated: 2026-11-27
-archived_at: null
+archived_at: 2026-11-27T08:43:14Z
 ---
 
 ## Notes
