@@ -1,7 +1,7 @@
 ---
 change_id: rs-feature-existing-issue
 title: rs-feature hands off a request that already has an issue
-status: planned
+status: implemented
 created: 2026-11-27
 updated: 2026-11-27
 archived_at: null
