@@ -5,5 +5,14 @@
   "author": {
     "name": "Rocksoft"
   },
-  "keywords": ["rocksoft", "rs-feature", "feature-request", "discovery", "mcp"]
+  "keywords": [
+    "rocksoft",
+    "rs-feature",
+    "feature-request",
+    "discovery",
+    "mcp"
+  ],
+  "dependencies": [
+    "rs-skills"
+  ]
 }

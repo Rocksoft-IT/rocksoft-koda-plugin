@@ -2,18 +2,20 @@
 project: rocksoft-koda
 context_type: brownfield
 created: 2026-11-12
-updated: 2026-11-12
+updated: 2026-11-23
 source: detected-from-cwd
 ---
 
 # Rocksoft Koda Plugin — Tech Stack
 
 ## Languages & Runtimes
-- None (no source code to compile or run) — the project is a Claude Code
-  and OpenAI Codex plugin: Markdown skill definitions
-  (`skills/rs-feature/SKILL.md`) plus JSON configuration
-  (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, `.mcp.json`). No package
-  manager, lockfile, or language manifest is present.
+- The plugin itself is Markdown skill definitions (`skills/rs-feature/SKILL.md`)
+  plus JSON configuration (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`,
+  `.mcp.json`). No package manager, lockfile, or language manifest is present.
+- Python 3, standard library only, for the hook scripts under `hooks/`
+  (`hooks/scripts/koda_hook.py`) and their tests (`hooks/tests`). No
+  dependencies and no network modules; `python3` on the developer's machine is
+  the only requirement.
 
 ## Integrations
 - MCP server: Rocksoft Flow, configured in `.mcp.json` (`mcpServers.rocksoft-koda`),
@@ -27,8 +29,10 @@ source: detected-from-cwd
 - GitHub Issues (default) — `origin` is `github.com/Rocksoft-IT/rocksoft-koda-plugin`.
 
 ## Commands
-- No install/build/test commands apply; changes are reviewed by reading the
-  Markdown/JSON diff.
+- Test: `python3 -m unittest discover -s hooks/tests` (stdlib `unittest`;
+  a single class, e.g. `-k PromptTests`).
+- No install or build step; manifest and Markdown changes are reviewed by
+  reading the diff.
 
 ## Tooling
 - None beyond the plugin/marketplace manifests: Claude
