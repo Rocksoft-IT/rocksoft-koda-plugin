@@ -87,7 +87,7 @@ Shared conventions (all in `SKILL.md`, applying to every flow):
 ## Increments
 | # | Name | Phases | Depends on | User-visible | Status | PR |
 |---|---|---|---|---|---|---|
-| 1 | Post-issue flows skill: status, decide, recover | 1-3 | — | yes | in-progress | — |
+| 1 | Post-issue flows skill: status, decide, recover | 1-3 | — | yes | done | — |
 | 2 | Feedback flow and wiring | 4-5 | 1 | yes | pending | — |
 
 ## Phase 1: Skill core and status flow
