@@ -124,6 +124,15 @@ again as above.
 
 ## Initial response
 
+- **If the request points to work that already has an issue** (a GitHub issue
+  number or link, or a tracker ticket id whose issue already exists in the
+  repository), do not create a duplicate and do not build the change. Tell the
+  client, in their language, that the issue already exists and that the run
+  starts from the issue's `rs-feature` / `rs-bug` label, which this skill
+  cannot add; ask them to add the label or to send the issue number to their
+  Rocksoft contact. Stop there. This is a complete outcome, not an error.
+  Continue with Step 0 only if the client says the existing issue is wrong or
+  incomplete and wants a new one.
 - **If the client's message already describes the request**, keep it verbatim
   as the *initial request* and go straight to Step 0. Do not paraphrase it back
   yet.
@@ -398,7 +407,9 @@ Step 6 is the last step. Do not propose next actions beyond it.
 
 1. **One artifact, one place.** The issue is the only output. Never write local
    files, never open PRs, never call `create_spec_pr` or `create_change_pr`
-   even if they are exposed.
+   even if they are exposed, and never implement the request yourself,
+   including when its issue already exists: building happens in Rocksoft Flow
+   after the issue carries the `rs-feature` / `rs-bug` label.
 2. **Repository is mandatory and comes from Rocksoft Flow.** No free-text repo
    names, no guessing `git_url`, no fallback repository. A `git_url` passed to
    `create_feature_issue` must be either a repository from `list_repositories`
