@@ -1,10 +1,10 @@
 <!-- preview-link -->
 
-**What this delivers:** A new Koda assistant that, after your request is created, lets you ask "what's waiting for me?" and see where each request stands. It also walks you through a decision on a finished piece of work: you discuss it in your own chat, then accept it, ask for changes or answer open questions. It explains in plain words why a run stopped and can restart it with your comment. Nothing is sent without your clear yes on the exact text, and it never merges anything itself.
+**What this delivers:** You can now give feedback about the plugin or Koda straight from the chat: you describe it once, the assistant writes it up in your words, and after your clear yes it sends it and shows you the link to follow it. After you create a request, the original assistant now tells you that you can ask "what's waiting for me?" later. The instructions and documentation describe both assistants and their flows, and the plugin is released as version 0.7.0.
 
-This is the first of two parts; the second part (feedback and links from the existing assistant) is released after it.
+This builds on the previous part and is released after it.
 
 ## QA brief (for the preview check)
-- **Applies to browser QA:** no (a chat assistant instruction set, nothing renders in a browser)
+- **Applies to browser QA:** no (a chat assistant instruction set and documentation, nothing renders in a browser)
 
 **Status:** Ready to merge; nothing to check by hand.
