@@ -239,10 +239,10 @@ No test infrastructure (`context/foundation/tech-stack.md` "Commands": changes a
 
 ### Phase 3: Run recovery flow
 #### Automated
-- [x] 3.1 `test -f skills/rs-status/references/recover.md`
-- [x] 3.2 `grep -qi 'resume' skills/rs-status/references/recover.md && grep -qi 'yes' skills/rs-status/references/recover.md`
-- [x] 3.3 `for f in status decide recover; do grep -q "references/$f.md" skills/rs-status/SKILL.md || exit 1; done`
-- [x] 3.4 `git diff --quiet main -- skills/rs-feature`
+- [x] 3.1 `test -f skills/rs-status/references/recover.md` — af33aa9
+- [x] 3.2 `grep -qi 'resume' skills/rs-status/references/recover.md && grep -qi 'yes' skills/rs-status/references/recover.md` — af33aa9
+- [x] 3.3 `for f in status decide recover; do grep -q "references/$f.md" skills/rs-status/SKILL.md || exit 1; done` — af33aa9
+- [x] 3.4 `git diff --quiet main -- skills/rs-feature` — af33aa9
 #### Manual
 - [ ] 3.5 A reader walks AC-03 for a blocked run and finds a plain explanation, a confirmed resume and no retry on other ids.
 
