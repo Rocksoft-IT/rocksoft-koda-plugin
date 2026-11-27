@@ -248,18 +248,18 @@ No test infrastructure (`context/foundation/tech-stack.md` "Commands": changes a
 
 ### Phase 4: Feedback flow
 #### Automated
-- [x] 4.1 `test -f skills/rs-status/references/feedback.md && grep -q 'send_feedback' skills/rs-status/references/feedback.md`
-- [x] 4.2 `grep -q 'references/feedback.md' skills/rs-status/SKILL.md`
-- [x] 4.3 `grep -qi 'yes' skills/rs-status/references/feedback.md && grep -qi 'link' skills/rs-status/references/feedback.md`
+- [x] 4.1 `test -f skills/rs-status/references/feedback.md && grep -q 'send_feedback' skills/rs-status/references/feedback.md` — bdbfdfc
+- [x] 4.2 `grep -q 'references/feedback.md' skills/rs-status/SKILL.md` — bdbfdfc
+- [x] 4.3 `grep -qi 'yes' skills/rs-status/references/feedback.md && grep -qi 'link' skills/rs-status/references/feedback.md` — bdbfdfc
 #### Manual
 - [ ] 4.4 A reader walks AC-05 and counts two client messages from description to sent feedback.
 
 ### Phase 5: Wiring and version bump
 #### Automated
-- [ ] 5.1 `python3 -m json.tool .claude-plugin/plugin.json >/dev/null && python3 -m json.tool .codex-plugin/plugin.json >/dev/null`
-- [ ] 5.2 `grep -q '"version": "0.7.0"' .claude-plugin/plugin.json && grep -q '"version": "0.7.0"' .codex-plugin/plugin.json`
-- [ ] 5.3 `grep -q '0.7.0' README.md && grep -q '0.7.0' USAGE.md && ! grep -rq '0\.6\.0' README.md USAGE.md .claude-plugin .codex-plugin`
-- [ ] 5.4 `grep -q 'rs-status' skills/rs-feature/SKILL.md && grep -q 'rs-status' README.md && grep -q 'rs-status' USAGE.md`
-- [ ] 5.5 `test "$(git diff main -- skills/rs-feature/SKILL.md | grep -c '^[-+][^-+]')" -le 8`
+- [x] 5.1 `python3 -m json.tool .claude-plugin/plugin.json >/dev/null && python3 -m json.tool .codex-plugin/plugin.json >/dev/null`
+- [x] 5.2 `grep -q '"version": "0.7.0"' .claude-plugin/plugin.json && grep -q '"version": "0.7.0"' .codex-plugin/plugin.json`
+- [x] 5.3 `grep -q '0.7.0' README.md && grep -q '0.7.0' USAGE.md && ! grep -rq '0\.6\.0' README.md USAGE.md .claude-plugin .codex-plugin`
+- [x] 5.4 `grep -q 'rs-status' skills/rs-feature/SKILL.md && grep -q 'rs-status' README.md && grep -q 'rs-status' USAGE.md`
+- [x] 5.5 `test "$(git diff main -- skills/rs-feature/SKILL.md | grep -c '^[-+][^-+]')" -le 8`
 #### Manual
 - [ ] 5.6 A reader confirms `rs-feature` reads and behaves as before except for the closing line.

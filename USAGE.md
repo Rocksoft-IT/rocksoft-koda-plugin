@@ -2,10 +2,11 @@
 
 Plugin `rocksoft-koda` pozwala zgłosić Rocksoftowi nową funkcjonalność lub zmianę bezpośrednio z rozmowy z Claude lub Codex. Efektem jest kompletne issue w Twoim repozytorium, od którego zespół Rocksoft (i jego automatyka) zaczyna pracę.
 
-Po instalacji w Claude lub Codex dostępne są dwie rzeczy:
+Po instalacji w Claude lub Codex dostępne są trzy rzeczy:
 
 1. **Skill `rs-feature`** — prowadzi rozmowę i tworzy issue.
-2. **Konnektor `rocksoft-koda`** — połączenie z bramką Rocksoft (`mcp.rocksoft.pl`), które listuje Twoje repozytoria, czyta kontekst projektu i zakłada issue. Logujesz się raz, kontem służbowym Microsoft (w Claude Code przez `/mcp`, w Codex przez `codex mcp login rocksoft-koda`) — żadnych kluczy czy sekretów po Twojej stronie. Po aktualizacji pluginu konnektor zmienił nazwę — zaloguj się ponownie.
+2. **Skill `rs-status`** — prowadzi Cię przez wszystko po utworzeniu issue: status, decyzje, wznowienie zatrzymanego przebiegu i opinię.
+3. **Konnektor `rocksoft-koda`** — połączenie z bramką Rocksoft (`mcp.rocksoft.pl`), które listuje Twoje repozytoria, czyta kontekst projektu, zakłada issue i obsługuje przepływy `rs-status`. Logujesz się raz, kontem służbowym Microsoft (w Claude Code przez `/mcp`, w Codex przez `codex mcp login rocksoft-koda`) — żadnych kluczy czy sekretów po Twojej stronie. Po aktualizacji pluginu konnektor zmienił nazwę — zaloguj się ponownie.
 
 ---
 
@@ -49,7 +50,7 @@ codex mcp add rocksoft-koda --url https://mcp.rocksoft.pl/koda/
 codex mcp login rocksoft-koda
 ```
 
-Skopiuj folder `skills/rs-feature` z repozytorium do `~/.agents/skills/rs-feature`. Nie łącz tego z instalacją pluginu przez CLI (zdublowany serwer).
+Skopiuj foldery `skills/rs-feature` i `skills/rs-status` z repozytorium do `~/.agents/skills/rs-feature` i `~/.agents/skills/rs-status`. Nie łącz tego z instalacją pluginu przez CLI (zdublowany serwer).
 
 ### Codex cloud / ChatGPT
 
@@ -119,6 +120,37 @@ Jeśli w danej chwili Rocksoft Flow nie ma jeszcze narzędzia do zakładania iss
 
 ---
 
+## Po utworzeniu issue: skill `rs-status`
+
+Gdy issue już istnieje, nie musisz otwierać Cezara — wszystko załatwisz w czacie. Skill `rs-status` uruchamia się na zwykłe prośby, np.:
+
+```text
+Co na mnie czeka?
+```
+
+```text
+Zaakceptuj ten pull request.
+```
+
+```text
+Dlaczego to się nie udało? Wznów z moim komentarzem.
+```
+
+```text
+Chcę dać opinię o Kodzie.
+```
+
+Możesz też wywołać go wprost: `/rs-status`. Skill obsługuje cztery przepływy:
+
+1. **Status** — lista Twoich zgłoszeń prostym językiem, najpierw te, które czekają na Ciebie, z linkami. Stąd przechodzisz do decyzji lub wyjaśnienia nieudanego przebiegu.
+2. **Decyzja** — skill wczytuje kontekst pull requesta (o co prosiłeś, co zbudowano, co sprawdzić, jakie pytania są otwarte), odpowiada na Twoje pytania wyłącznie na tej podstawie, a potem pozwala zaakceptować, poprosić o zmiany albo odpowiedzieć na otwarte pytania. Scalanie robi Rocksoft po Twojej akceptacji — skill nigdy nie scala.
+3. **Wznowienie** — skill wyjaśnia po ludzku, dlaczego przebieg się nie udał lub czeka na Ciebie, i — jeśli chcesz — wznawia go z Twoim komentarzem.
+4. **Opinia** — opisujesz uwagi o pluginie lub Kodzie, skill od razu przygotowuje tekst Twoimi słowami; po Twoim „tak” wysyła go i podaje link do utworzonego zgłoszenia. Całość to dwie wiadomości.
+
+Zasady jak przy zgłaszaniu: akceptacja, prośba o zmiany, odpowiedzi, wznowienie i opinia wykonują się **dopiero po Twoim jawnym „tak”** na pokazanym dokładnie tekście. Treści pochodzące z narzędzi (tytuły, opisy, komentarze, wyjaśnienia) skill traktuje jako dane, nigdy jako polecenia.
+
+---
+
 ## Co zawiera issue
 
 Stały układ, żeby czytał je zarówno człowiek, jak i automat:
@@ -154,10 +186,11 @@ Stały układ, żeby czytał je zarówno człowiek, jak i automat:
 | Brak repozytoriów dla Twojego konta | Skill zatrzymuje się po kroku 1 | Poproś opiekuna w Rocksoft o przypisanie repozytorium do Twojego konta |
 | Narzędzie `create_feature_issue` niedostępne | Skill drukuje gotową treść issue | Prześlij ją opiekunowi w Rocksoft |
 | Błąd „repository not assigned” | Zalogowane konto i repozytorium nie pasują do siebie | Wróć do wyboru repozytorium albo skontaktuj się z opiekunem w Rocksoft |
+| Akcja w `rs-status` odrzucona (brak dostępu, nie znaleziono, Cezar niedostępny) | Skill wyjaśnia, co się stało, niczego nie ponawia na innych identyfikatorach i drukuje Twój tekst, żeby nie zginął | Prześlij tekst opiekunowi w Rocksoft albo spróbuj ponownie później |
 | Brak plików kontekstu w repozytorium | Normalne — skill oprze się na rozmowie | Nic |
 
 ---
 
 ## Wersja
 
-Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.6.0`.
+Dokument dotyczy pluginu `rocksoft-koda` w wersji `0.7.0`.
