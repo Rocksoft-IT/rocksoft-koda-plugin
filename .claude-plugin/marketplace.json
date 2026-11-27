@@ -8,6 +8,16 @@
       "name": "rocksoft-koda",
       "source": "./",
       "description": "Rocksoft Koda — rs-feature skill + Rocksoft Flow MCP server. Turns feature requests into ready-to-build issues."
+    },
+    {
+      "name": "rs-skills",
+      "description": "Rocksoft rs-skills — the rs-* workflow skills and agents (plan, implement, review, archive) that Koda routes work to.",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Rocksoft-IT/rs-skills-dist.git",
+        "path": "claude",
+        "ref": "rs-skills--v3.2.0"
+      }
     }
   ]
 }

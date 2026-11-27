@@ -5,7 +5,13 @@
   "author": {
     "name": "Rocksoft"
   },
-  "keywords": ["rocksoft", "rs-feature", "feature-request", "discovery", "mcp"],
+  "keywords": [
+    "rocksoft",
+    "rs-feature",
+    "feature-request",
+    "discovery",
+    "mcp"
+  ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
@@ -14,7 +20,10 @@
     "longDescription": "Describe a feature or a change in your own words. Rocksoft Koda talks it through with you, drafts a ready-to-build GitHub issue in your repository and creates it only after your explicit yes.",
     "developerName": "Rocksoft",
     "category": "Productivity",
-    "capabilities": ["Interactive", "Write"],
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
     "defaultPrompt": [
       "I want to add a new feature to our project",
       "We need to change how an existing screen works"
