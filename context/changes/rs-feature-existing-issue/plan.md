@@ -39,8 +39,8 @@ One skill file gets an existing-issue branch in Initial response and a longer Gu
 
 ### Phase 1: Hand off existing issues
 #### Automated
-- [x] 1.1 `grep -q 'already has an issue' skills/rs-feature/SKILL.md` exits 0 — bd1fd2b
-- [x] 1.2 `grep -q 'never implement' skills/rs-feature/SKILL.md` exits 0 — bd1fd2b
-- [x] 1.3 `! git diff HEAD --  skills/rs-feature/SKILL.md | grep -q '—'` exits 0 — bd1fd2b
+- [x] 1.1 `grep -q 'already has an issue' skills/rs-feature/SKILL.md` exits 0 — bd1fd2b, re-verified 800a0eb
+- [x] 1.2 `grep -q 'never implement' skills/rs-feature/SKILL.md` exits 0 — bd1fd2b, re-verified 800a0eb
+- [x] 1.3 `! git diff HEAD --  skills/rs-feature/SKILL.md | grep -q '—'` exits 0 — bd1fd2b, re-verified 800a0eb
 #### Manual
 - [ ] 1.4 The Initial response reads as a complete outcome, not an error
