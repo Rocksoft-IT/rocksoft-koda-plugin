@@ -248,9 +248,9 @@ No test infrastructure (`context/foundation/tech-stack.md` "Commands": changes a
 
 ### Phase 4: Feedback flow
 #### Automated
-- [ ] 4.1 `test -f skills/rs-status/references/feedback.md && grep -q 'send_feedback' skills/rs-status/references/feedback.md`
-- [ ] 4.2 `grep -q 'references/feedback.md' skills/rs-status/SKILL.md`
-- [ ] 4.3 `grep -qi 'yes' skills/rs-status/references/feedback.md && grep -qi 'link' skills/rs-status/references/feedback.md`
+- [x] 4.1 `test -f skills/rs-status/references/feedback.md && grep -q 'send_feedback' skills/rs-status/references/feedback.md`
+- [x] 4.2 `grep -q 'references/feedback.md' skills/rs-status/SKILL.md`
+- [x] 4.3 `grep -qi 'yes' skills/rs-status/references/feedback.md && grep -qi 'link' skills/rs-status/references/feedback.md`
 #### Manual
 - [ ] 4.4 A reader walks AC-05 and counts two client messages from description to sent feedback.
 
